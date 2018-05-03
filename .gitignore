@@ -1,0 +1,13 @@
+*.jar
+
+*.war
+
+*.ear
+
+*.class
+
+
+bin/**
+
+.settings/
+
