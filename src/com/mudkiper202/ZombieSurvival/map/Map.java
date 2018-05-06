@@ -85,7 +85,8 @@ public class Map {
 			for(int i = 0; i < columns; i++) {
 				int[] row = new int[lines.get(i).split(",").length];
 				for (int j = 0; j < row.length; j++) {
-					row[j] = Integer.valueOf(lines.get(i).split(",")[j]);
+					String number = (lines.get(i).split(",")[j].trim());
+					row[j] = Integer.valueOf(number);
 				}
 				map[i] = row;
 			}

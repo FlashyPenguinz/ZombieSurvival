@@ -6,6 +6,11 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
+<<<<<<< HEAD
+=======
+import com.mudkiper202.ZombieSurvival.entities.Player;
+import com.mudkiper202.ZombieSurvival.game.GameConstants;
+>>>>>>> 09958b4400e63ce11e4f7a9a23d6dde5a55fced1
 import com.mudkiper202.ZombieSurvival.game.GameManager;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
 import com.mudkiper202.ZombieSurvival.map.Map;
@@ -26,7 +31,7 @@ public class MainGameLoop {
 		AudioMaster.setListenerData();
 		
 		Map map = new Map(Map.loadMapFile("map"));
-		Player player = new Player(map, 100, 100, new TextureAtlas("player"));
+		Player player = new Player(map, 16*GameConstants.TILE_SIZE,16*GameConstants.TILE_SIZE, new TextureAtlas("player"));
 
 		GameManager gm = new GameManager(map, player);
 
