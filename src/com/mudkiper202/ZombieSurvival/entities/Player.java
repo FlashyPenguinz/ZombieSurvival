@@ -42,9 +42,6 @@ public class Player extends Entity {
 				getRotation(), getTextureAtlas().getTexture(), texCoords[0],
 				texCoords[1], texCoords[2], texCoords[3]);
 		GL11.glPopMatrix();
-		GL11.glBegin(GL11.GL_POINT);
-		GL11.glVertex2f(getX(), getY());
-		GL11.glEnd();
 	}
 
 	private void checkInputs() {
