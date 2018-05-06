@@ -1,6 +1,6 @@
 package com.mudkiper202.ZombieSurvival.game;
 
-import com.mudkiper202.ZombieSurvival.textures.TextureAtlas;
+import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
 
 public class GameConstants {
 

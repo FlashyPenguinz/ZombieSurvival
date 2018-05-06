@@ -2,54 +2,50 @@ package com.mudkiper202.ZombieSurvival.map;
 
 import com.mudkiper202.ZombieSurvival.game.GameConstants;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
-import com.mudkiper202.ZombieSurvival.textures.TextureAtlas;
 
 public class Tile {
 
 	private float x, y;
-	private TextureAtlas texture;
-	private int texX, texY;
-	
-	private boolean collidable;
-	
-	public Tile(float x, float y, TextureAtlas texture, int texX, int texY, boolean collidable) {
+
+	private TileType type;
+
+	public Tile(float x, float y, TileType type) {
 		this.x = x;
 		this.y = y;
-		this.texture = texture;
-		this.texX = texX;
-		this.texY = texY;
-		this.collidable = collidable;
+		this.type = type;
 	}
-	
+
 	public void draw(float x, float y) {
-		float[] texCoords = texture.getTextureCoords(texX, texY);
-		Artist.drawTexturedQuad(this.x+x, this.y+y, GameConstants.TILE_SIZE, GameConstants.TILE_SIZE, texture.getTexture(),
-				texCoords[0], texCoords[1], texCoords[2], texCoords[3]);
+		float[] texCoords = GameConstants.MAP_ATLAS.getTextureCoords(
+				type.getTexX(), type.getTexY());
+		Artist.drawTexturedQuad(this.x + x, this.y + y,
+				GameConstants.TILE_SIZE, GameConstants.TILE_SIZE,
+				GameConstants.MAP_ATLAS.getTexture(), texCoords[0],
+				texCoords[1], texCoords[2], texCoords[3]);
 	}
-	
+
 	public void setX(float x) {
 		this.x = x;
 	}
-	
+
 	public void setY(float y) {
 		this.y = y;
 	}
-	
-	public void setTextureCoords(int texX, int texY) {
-		this.texX = texX;
-		this.texY = texY;
+
+	public void setType(TileType type) {
+		this.type = type;
 	}
-	
-	public boolean isCollidable() {
-		return collidable;
+
+	public TileType getType() {
+		return type;
 	}
-	
+
 	public float getX() {
 		return x;
 	}
-	
+
 	public float getY() {
 		return y;
 	}
-	
+
 }

@@ -2,9 +2,9 @@ package com.mudkiper202.ZombieSurvival.entities;
 
 import org.lwjgl.util.vector.Vector2f;
 
+import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
 import com.mudkiper202.ZombieSurvival.game.GameConstants;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
-import com.mudkiper202.ZombieSurvival.textures.TextureAtlas;
 
 public class Entity {
 

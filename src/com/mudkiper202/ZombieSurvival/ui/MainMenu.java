@@ -2,6 +2,7 @@ package com.mudkiper202.ZombieSurvival.ui;
 
 import java.awt.Font;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import com.mudkiper202.ZombieSurvival.game.GameManager;
@@ -18,6 +19,7 @@ public class MainMenu {
 		this.playGame = new TextButton(new Text(Display.getWidth() / 2,
 				Display.getHeight() / 2, "Play Game", Font.BOLD, 38), () -> {
 			gm.setState(GameState.PLAYING);
+			Mouse.setGrabbed(true);
 		});
 	}
 

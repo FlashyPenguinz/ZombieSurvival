@@ -5,21 +5,31 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
+import com.mudkiper202.ZombieSurvival.data.AABB;
+import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
 import com.mudkiper202.ZombieSurvival.game.GameConstants;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
-import com.mudkiper202.ZombieSurvival.textures.TextureAtlas;
+import com.mudkiper202.ZombieSurvival.map.Map;
 
 public class Player extends Entity {
 
+	private Map map;
+
+	private AABB aabb;
+
 	private final float SPEED = 2;
 
-	public Player(float x, float y, TextureAtlas texture) {
+	public Player(Map map, float x, float y, TextureAtlas texture) {
 		super(x, y, texture, 0, 0, 0);
+		this.map = map;
+		this.aabb = new AABB(0, 0, GameConstants.TILE_SIZE - 35,
+				GameConstants.TILE_SIZE - 35);
 	}
 
 	public void update() {
 		checkInputs();
 		calculateRotation();
+		updateAABB(getX(), getY());
 	}
 
 	@Override
@@ -32,31 +42,74 @@ public class Player extends Entity {
 				getRotation(), getTextureAtlas().getTexture(), texCoords[0],
 				texCoords[1], texCoords[2], texCoords[3]);
 		GL11.glPopMatrix();
+		GL11.glBegin(GL11.GL_POINT);
+		GL11.glVertex2f(getX(), getY());
+		GL11.glEnd();
 	}
 
 	private void checkInputs() {
+		float xIncrease = 0;
+		float yIncrease = 0;
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			increasePosition(0, -SPEED);
+			yIncrease = -SPEED;
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			increasePosition(0, SPEED);
+			yIncrease = SPEED;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			increasePosition(-SPEED, 0);
+			xIncrease = -SPEED;
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			increasePosition(SPEED, 0);
+			xIncrease = SPEED;
 		}
+		updateAABB(getX() + xIncrease, getY());
+		if (checkCollisions() == false)
+			increasePosition(xIncrease, 0);
+		updateAABB(getX(), getY() + yIncrease);
+		if (checkCollisions() == false)
+			increasePosition(0, yIncrease);
+	}
+
+	private boolean checkCollisions() {
+		if (aabb.getX() < 0
+				|| aabb.getX() + aabb.getWidth() > (map.size() * GameConstants.TILE_SIZE)
+				|| aabb.getY() < 0
+				|| aabb.getY() + aabb.getHeight() > (map.size() * GameConstants.TILE_SIZE)) {
+			updateAABB(getX(), getY());
+			return true;
+		}
+		if (map.getTile(
+				(int) Math.floor(aabb.getX() / GameConstants.TILE_SIZE),
+				(int) Math.floor(aabb.getY() / GameConstants.TILE_SIZE))
+				.getType().isCollidable()) return true;
+		if (map.getTile(
+				(int) Math.floor((aabb.getX()+aabb.getWidth()) / GameConstants.TILE_SIZE),
+				(int) Math.floor(aabb.getY() / GameConstants.TILE_SIZE))
+				.getType().isCollidable()) return true;
+		if (map.getTile(
+				(int) Math.floor((aabb.getX()+aabb.getWidth()) / GameConstants.TILE_SIZE),
+				(int) Math.floor((aabb.getY()+aabb.getHeight()) / GameConstants.TILE_SIZE))
+				.getType().isCollidable()) return true;
+		if (map.getTile(
+				(int) Math.floor(aabb.getX() / GameConstants.TILE_SIZE),
+				(int) Math.floor((aabb.getY()+aabb.getHeight()) / GameConstants.TILE_SIZE))
+				.getType().isCollidable()) return true;
+		return false;
+	}
+
+	private void updateAABB(float x, float y) {
+		aabb.update(x - 15, y - 15);
 	}
 
 	private void calculateRotation() {
 		float mouseX = Mouse.getX();
 		float mouseY = Display.getHeight() - Mouse.getY();
-		float playerX = Display.getWidth()/2;
-		float playerY = Display.getHeight()/2;
+		float playerX = Display.getWidth() / 2;
+		float playerY = Display.getHeight() / 2;
 		float xDif = playerX - mouseX;
 		float yDif = mouseY - playerY;
-		float hypotonuse = (float) Math.sqrt(Math.pow(xDif, 2) + Math.pow(yDif, 2));
-		float angle = (float) (Math.toDegrees(Math.asin(yDif / hypotonuse))+90);
-		if(Mouse.getX()<Display.getWidth()/2)
+		float hypotonuse = (float) Math.sqrt(Math.pow(xDif, 2)
+				+ Math.pow(yDif, 2));
+		float angle = (float) (Math.toDegrees(Math.asin(yDif / hypotonuse)) + 90);
+		if (Mouse.getX() < Display.getWidth() / 2)
 			angle = -angle;
 		super.setRotation(angle);
 	}
