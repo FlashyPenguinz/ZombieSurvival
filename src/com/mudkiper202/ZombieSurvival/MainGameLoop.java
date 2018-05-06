@@ -6,11 +6,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
-<<<<<<< HEAD
-=======
-import com.mudkiper202.ZombieSurvival.entities.Player;
 import com.mudkiper202.ZombieSurvival.game.GameConstants;
->>>>>>> 09958b4400e63ce11e4f7a9a23d6dde5a55fced1
 import com.mudkiper202.ZombieSurvival.game.GameManager;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
 import com.mudkiper202.ZombieSurvival.map.Map;
