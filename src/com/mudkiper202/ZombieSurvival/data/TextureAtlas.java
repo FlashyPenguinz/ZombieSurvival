@@ -3,6 +3,7 @@ package com.mudkiper202.ZombieSurvival.data;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -19,6 +20,10 @@ public class TextureAtlas {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureID());
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		this.texture = texture;
 	}
 	

@@ -43,5 +43,9 @@ public class Image {
 	public void draw() {
 		Artist.drawTexturedQuad(x, y, width, height, texture);
 	}
+	
+	public Texture getTexture() {
+		return texture;
+	}
 
 }

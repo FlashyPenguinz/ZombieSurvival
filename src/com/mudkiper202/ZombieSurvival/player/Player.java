@@ -1,4 +1,4 @@
-package com.mudkiper202.ZombieSurvival.entities;
+package com.mudkiper202.ZombieSurvival.player;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -7,14 +7,18 @@ import org.lwjgl.opengl.GL11;
 
 import com.mudkiper202.ZombieSurvival.data.AABB;
 import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
+import com.mudkiper202.ZombieSurvival.entities.Entity;
 import com.mudkiper202.ZombieSurvival.game.GameConstants;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
+import com.mudkiper202.ZombieSurvival.helpers.Timer;
 import com.mudkiper202.ZombieSurvival.map.Map;
 
 public class Player extends Entity {
 
 	private Map map;
 
+	private Gun gun;
+	
 	private AABB aabb;
 
 	private final float SPEED = 2;
@@ -22,6 +26,7 @@ public class Player extends Entity {
 	public Player(Map map, float x, float y, TextureAtlas texture) {
 		super(x, y, texture, 0, 0, 0);
 		this.map = map;
+		this.gun = new Gun(this);
 		this.aabb = new AABB(0, 0, GameConstants.TILE_SIZE - 35,
 				GameConstants.TILE_SIZE - 35);
 	}
@@ -30,18 +35,22 @@ public class Player extends Entity {
 		checkInputs();
 		calculateRotation();
 		updateAABB(getX(), getY());
+		gun.update();
 	}
 
 	@Override
 	public void draw() {
-		float[] texCoords = getTextureAtlas().getTextureCoords(
-				(int) getTextureCoords().x, (int) getTextureCoords().y);
+		gun.drawBullets();
 		GL11.glPushMatrix();
 		Artist.drawTexturedQuad(GameConstants.DISPLAY_WIDTH / 2,
 				GameConstants.DISPLAY_HEIGHT / 2, getWidth(), getHeight(),
-				getRotation(), getTextureAtlas().getTexture(), texCoords[0],
-				texCoords[1], texCoords[2], texCoords[3]);
+				getRotation(), getTextureAtlas().getTexture(), 0,
+				0, 1, 1);
 		GL11.glPopMatrix();
+	}
+	
+	public Map getMap() {
+		return map;
 	}
 
 	private void checkInputs() {
@@ -57,6 +66,8 @@ public class Player extends Entity {
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			xIncrease = SPEED;
 		}
+		xIncrease *= Timer.delta;
+		yIncrease *= Timer.delta;
 		updateAABB(getX() + xIncrease, getY());
 		if (checkCollisions() == false)
 			increasePosition(xIncrease, 0);

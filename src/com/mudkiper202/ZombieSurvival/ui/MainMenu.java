@@ -19,6 +19,7 @@ public class MainMenu {
 		this.playGame = new TextButton(new Text(Display.getWidth() / 2,
 				Display.getHeight() / 2, "Play Game", Font.BOLD, 38), () -> {
 			gm.setState(GameState.PLAYING);
+			gm.setPaused(false);
 			Mouse.setGrabbed(true);
 		});
 	}

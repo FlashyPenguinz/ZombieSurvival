@@ -10,6 +10,7 @@ public class GameConstants {
 	public static final int DISPLAY_FPS = 128;
 
 	public static final String TEXTURES_FOLDER = "res/textures/";
+	public static final String SOUNDS_FOLDER = "res/sounds/";
 	public static final TextureAtlas MAP_ATLAS = new TextureAtlas("tileAtlas");
 
 	public static final int TILE_SIZE = 64;
