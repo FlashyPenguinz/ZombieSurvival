@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
 import com.mudkiper202.ZombieSurvival.entities.Player;
+import com.mudkiper202.ZombieSurvival.game.GameConstants;
 import com.mudkiper202.ZombieSurvival.game.GameManager;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
 import com.mudkiper202.ZombieSurvival.map.Map;
@@ -22,7 +23,7 @@ public class MainGameLoop {
 		}
 		
 		Map map = new Map(Map.loadMapFile("map"));
-		Player player = new Player(map, 100, 100, new TextureAtlas("player"));
+		Player player = new Player(map, 16*GameConstants.TILE_SIZE,16*GameConstants.TILE_SIZE, new TextureAtlas("player"));
 
 		GameManager gm = new GameManager(map, player);
 
