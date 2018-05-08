@@ -12,8 +12,10 @@ import com.mudkiper202.ZombieSurvival.game.GameConstants;
 public class TextureAtlas {
 
 	private Texture texture;
+	private String textureName;
 	
 	public TextureAtlas(String path) {
+		this.textureName = path;
 		Texture texture = null;
 		try {
 			texture = TextureLoader.getTexture("PNG", new FileInputStream(GameConstants.TEXTURES_FOLDER+path+".png"));
@@ -40,6 +42,10 @@ public class TextureAtlas {
 	
 	public Texture getTexture() {
 		return texture;
+	}
+	
+	public String getTextureName() {
+		return textureName;
 	}
 	
 }

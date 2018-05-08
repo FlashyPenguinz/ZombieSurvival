@@ -5,12 +5,9 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
-import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
-import com.mudkiper202.ZombieSurvival.game.GameConstants;
 import com.mudkiper202.ZombieSurvival.game.GameManager;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
 import com.mudkiper202.ZombieSurvival.map.Map;
-import com.mudkiper202.ZombieSurvival.player.Player;
 import com.mudkiper202.ZombieSurvival.sound.AudioMaster;
 
 public class MainGameLoop {
@@ -27,9 +24,8 @@ public class MainGameLoop {
 		AudioMaster.setListenerData();
 		
 		Map map = new Map(Map.loadMapFile("map"));
-		Player player = new Player(map, 16*GameConstants.TILE_SIZE,16*GameConstants.TILE_SIZE, new TextureAtlas("player"));
 
-		GameManager gm = new GameManager(map, player);
+		GameManager gm = new GameManager(map);
 
 		while (!Display.isCloseRequested()) {
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);

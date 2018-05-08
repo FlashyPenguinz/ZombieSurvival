@@ -13,10 +13,10 @@ public class PauseMenu {
 	private Text paused;
 	private TextButton resume;
 	
-	public PauseMenu(GameManager gm) {
+	public PauseMenu() {
 		this.paused = new Text(Display.getWidth() / 2, 100, "Paused", Font.BOLD, 55);
 		this.resume = new TextButton(new Text(Display.getWidth()/2, Display.getHeight()/2, "Resume Game", Font.BOLD, 24), ()-> {
-			gm.setPaused(false);
+			GameManager.paused = false;
 			Mouse.setGrabbed(true);
 		});
 	}

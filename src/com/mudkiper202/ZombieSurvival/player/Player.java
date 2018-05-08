@@ -18,13 +18,13 @@ public class Player extends Entity {
 	private Map map;
 
 	private Gun gun;
-	
+
 	private AABB aabb;
 
 	private final float SPEED = 2;
 
 	public Player(Map map, float x, float y, TextureAtlas texture) {
-		super(x, y, texture, 0, 0, 0);
+		super(0, x, y, texture, 0, 0, 0);
 		this.map = map;
 		this.gun = new Gun(this);
 		this.aabb = new AABB(0, 0, GameConstants.TILE_SIZE - 35,
@@ -44,11 +44,10 @@ public class Player extends Entity {
 		GL11.glPushMatrix();
 		Artist.drawTexturedQuad(GameConstants.DISPLAY_WIDTH / 2,
 				GameConstants.DISPLAY_HEIGHT / 2, getWidth(), getHeight(),
-				getRotation(), getTextureAtlas().getTexture(), 0,
-				0, 1, 1);
+				getRotation(), getTextureAtlas().getTexture(), 0, 0, 1, 1);
 		GL11.glPopMatrix();
 	}
-	
+
 	public Map getMap() {
 		return map;
 	}
@@ -66,14 +65,14 @@ public class Player extends Entity {
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			xIncrease = SPEED;
 		}
-		xIncrease *= Timer.delta;
-		yIncrease *= Timer.delta;
 		updateAABB(getX() + xIncrease, getY());
-		if (checkCollisions() == false)
-			increasePosition(xIncrease, 0);
+		if (checkCollisions())
+			xIncrease = 0;
 		updateAABB(getX(), getY() + yIncrease);
-		if (checkCollisions() == false)
-			increasePosition(0, yIncrease);
+		if (checkCollisions())
+			xIncrease = 0;
+		if (!(xIncrease == 0 && yIncrease == 0))
+			increasePositionWithServerUpdate(xIncrease * Timer.delta, yIncrease * Timer.delta);
 	}
 
 	private boolean checkCollisions() {
@@ -87,19 +86,25 @@ public class Player extends Entity {
 		if (map.getTile(
 				(int) Math.floor(aabb.getX() / GameConstants.TILE_SIZE),
 				(int) Math.floor(aabb.getY() / GameConstants.TILE_SIZE))
-				.getType().isCollidable()) return true;
+				.getType().isCollidable())
+			return true;
 		if (map.getTile(
-				(int) Math.floor((aabb.getX()+aabb.getWidth()) / GameConstants.TILE_SIZE),
+				(int) Math.floor((aabb.getX() + aabb.getWidth())
+						/ GameConstants.TILE_SIZE),
 				(int) Math.floor(aabb.getY() / GameConstants.TILE_SIZE))
-				.getType().isCollidable()) return true;
+				.getType().isCollidable())
+			return true;
 		if (map.getTile(
-				(int) Math.floor((aabb.getX()+aabb.getWidth()) / GameConstants.TILE_SIZE),
-				(int) Math.floor((aabb.getY()+aabb.getHeight()) / GameConstants.TILE_SIZE))
-				.getType().isCollidable()) return true;
+				(int) Math.floor((aabb.getX() + aabb.getWidth())
+						/ GameConstants.TILE_SIZE),
+				(int) Math.floor((aabb.getY() + aabb.getHeight())
+						/ GameConstants.TILE_SIZE)).getType().isCollidable())
+			return true;
 		if (map.getTile(
 				(int) Math.floor(aabb.getX() / GameConstants.TILE_SIZE),
-				(int) Math.floor((aabb.getY()+aabb.getHeight()) / GameConstants.TILE_SIZE))
-				.getType().isCollidable()) return true;
+				(int) Math.floor((aabb.getY() + aabb.getHeight())
+						/ GameConstants.TILE_SIZE)).getType().isCollidable())
+			return true;
 		return false;
 	}
 
@@ -119,6 +124,6 @@ public class Player extends Entity {
 		float angle = (float) (Math.toDegrees(Math.asin(yDif / hypotonuse)) + 90);
 		if (Mouse.getX() < Display.getWidth() / 2)
 			angle = -angle;
-		super.setRotation(angle);
+		super.setRotationWithServerUpdate(angle);
 	}
 }
