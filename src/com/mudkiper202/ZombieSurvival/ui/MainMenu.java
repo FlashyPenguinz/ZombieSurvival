@@ -11,6 +11,7 @@ import com.mudkiper202.ZombieSurvival.game.GameManager;
 import com.mudkiper202.ZombieSurvival.game.GameState;
 import com.mudkiper202.ZombieSurvival.net.packets.Packet00Login;
 import com.mudkiper202.ZombieSurvival.net.packets.Packet02EntityChange;
+import com.mudkiper202.ZombieSurvival.net.packets.Packet05PlayerConnect;
 
 public class MainMenu {
 
@@ -32,7 +33,7 @@ public class MainMenu {
 					Packet00Login loginPacket = new Packet00Login(username);
 					gm.getClient().sendData(loginPacket.getData());
 					try {
-						Thread.sleep(3000);
+						Thread.sleep(1500);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -46,6 +47,14 @@ public class MainMenu {
 									.getPlayer().getTextureCoords().y);
 					gm.getClient().sendData(entityChangePacket.getData());
 					gm.getEntities().add(gm.getPlayer());
+					try {
+						Thread.sleep(1000);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					Packet05PlayerConnect playerConnectPacket = new Packet05PlayerConnect(gm.getPlayer().getId());
+					gm.getClient().sendData(playerConnectPacket.getData());
+					gm.getClient().connected = true;
 					Mouse.setGrabbed(true);
 				});
 	}

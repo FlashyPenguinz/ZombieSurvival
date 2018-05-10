@@ -20,6 +20,8 @@ public class Client extends Thread {
 
 	private static Client client;
 
+	public boolean connected = false;
+	
 	private GameManager gm;
 
 	private DatagramSocket socket;
@@ -69,14 +71,15 @@ public class Client extends Thread {
 			System.out.println("[" + ipAddress.getHostAddress() + ":" + port
 					+ "] " + loginPacket.getUsername() + " has connected...");
 			break;
-		case DISCONNECT:
-			break;
 		case ENTITY_CHANGE:
 			Packet02EntityChange changePacket = new Packet02EntityChange(data);
 			if (changePacket.getType() == 0) {
 				gm.addEntity(changePacket.getId(), changePacket.getX(),
 						changePacket.getY(), changePacket.getRotation(),
 						changePacket.getTextureName(), changePacket.getTexX(), changePacket.getTexY());
+			} else {
+				Entity entity = getEntityById(changePacket.getId());
+				gm.getEntities().remove(entity);
 			}
 			break;
 		 case MOVE:
@@ -85,14 +88,14 @@ public class Client extends Thread {
 			 if(movePlayer != null) {
 				 movePlayer.increasePosition(movePacket.getX(), movePacket.getY());
 			 }
-		 break;
+			 break;
 		 case ROTATION:
 			 Packet04Rotation rotationPacket = new Packet04Rotation(data);
 			 Entity rotationPlayer = getEntityById(rotationPacket.getId());
 			 if(rotationPlayer != null) {
 				 rotationPlayer.setRotation(rotationPacket.getRotation());
 			 }
-		 break;
+			 break;
 		}
 	}
 

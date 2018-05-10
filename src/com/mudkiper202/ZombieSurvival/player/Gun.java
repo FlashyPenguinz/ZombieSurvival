@@ -24,6 +24,7 @@ public class Gun {
 	public Gun(Player player) {
 		this.player = player;
 		this.soundPlayer = new Source();
+		this.soundPlayer.setGain(.25f);
 		this.soundBuffer = AudioMaster.loadSound("gunshot");
 	}
 

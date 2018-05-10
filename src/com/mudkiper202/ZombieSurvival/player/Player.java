@@ -70,7 +70,7 @@ public class Player extends Entity {
 			xIncrease = 0;
 		updateAABB(getX(), getY() + yIncrease);
 		if (checkCollisions())
-			xIncrease = 0;
+			yIncrease = 0;
 		if (!(xIncrease == 0 && yIncrease == 0))
 			increasePositionWithServerUpdate(xIncrease * Timer.delta, yIncrease * Timer.delta);
 	}

@@ -71,7 +71,6 @@ public class GameManager {
 		} else if (state == GameState.PLAYING) {
 			if (player != null) {
 				map.draw();
-				player.draw();
 				for (Entity entity : entities) {
 					if (!(entity instanceof Player)) {
 						entity.checkForTextureAtlas();
@@ -82,6 +81,7 @@ public class GameManager {
 										+ (Display.getHeight() / 2));
 					}
 				}
+				player.draw();
 				cursor.draw();
 				if (paused)
 					pauseMenu.draw();

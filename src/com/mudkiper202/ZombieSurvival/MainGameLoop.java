@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 import com.mudkiper202.ZombieSurvival.game.GameManager;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
 import com.mudkiper202.ZombieSurvival.map.Map;
+import com.mudkiper202.ZombieSurvival.net.packets.Packet01Disconnect;
 import com.mudkiper202.ZombieSurvival.sound.AudioMaster;
 
 public class MainGameLoop {
@@ -36,6 +37,9 @@ public class MainGameLoop {
 			Artist.updateDisplay();
 		}
 
+		if(gm.getClient().connected)
+			gm.getClient().sendData(new Packet01Disconnect().getData());
+		
 		AudioMaster.cleanUp();
 		Mouse.destroy();
 		Artist.destroyDisplay();

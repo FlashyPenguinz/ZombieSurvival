@@ -20,4 +20,8 @@ public class Source {
 		AL10.alSourcePlay(sourceId);
 	}
 	
+	public void setGain(float gain) {
+		AL10.alSourcef(sourceId, AL10.AL_GAIN, gain);
+	}
+	
 }
