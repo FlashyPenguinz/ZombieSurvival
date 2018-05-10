@@ -6,8 +6,7 @@ public class Packet05PlayerConnect extends Packet {
 	
 	public Packet05PlayerConnect(byte[] data) {
 		super(04);
-		String[] array = readData(data).split(",");
-		this.id = Integer.valueOf(array[0]);
+		this.id = Integer.valueOf(readData(data));
 	}
 	
 	public Packet05PlayerConnect(int id) {
