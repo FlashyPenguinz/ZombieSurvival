@@ -33,7 +33,7 @@ public class MainMenu {
 					Packet00Login loginPacket = new Packet00Login(username);
 					gm.getClient().sendData(loginPacket.getData());
 					try {
-						Thread.sleep(1500);
+						Thread.sleep(2000);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -55,6 +55,7 @@ public class MainMenu {
 					Packet05PlayerConnect playerConnectPacket = new Packet05PlayerConnect(gm.getPlayer().getId());
 					gm.getClient().sendData(playerConnectPacket.getData());
 					gm.getClient().connected = true;
+					System.out.println("End");
 					Mouse.setGrabbed(true);
 				});
 	}

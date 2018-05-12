@@ -111,5 +111,14 @@ public class GameManager {
 		entities.add(new Entity(id, x, y, textureName, texX,
 				texY, rotation));
 	}
+	
+	public void removeEntity(int id) {
+		for (int i = 0; i < entities.size(); i++) {
+			if(entities.get(i).getId() == id) {
+				entities.remove(i);
+				return;
+			}
+		}
+	}
 
 }

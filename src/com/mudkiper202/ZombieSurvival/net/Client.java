@@ -78,8 +78,7 @@ public class Client extends Thread {
 						changePacket.getY(), changePacket.getRotation(),
 						changePacket.getTextureName(), changePacket.getTexX(), changePacket.getTexY());
 			} else {
-				Entity entity = getEntityById(changePacket.getId());
-				gm.getEntities().remove(entity);
+				gm.removeEntity(changePacket.getId());
 			}
 			break;
 		 case MOVE:

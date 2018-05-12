@@ -56,7 +56,7 @@ public class Entity {
 	
 	public void draw() {
 		if(this.textureName != null) {
-			System.out.println("Makeing " + textureName);
+			//System.out.println("Makeing " + textureName);
 			this.texture = new TextureAtlas(textureName);
 		}
 		float[] texCoords = texture.getTextureCoords(texX, texY);
