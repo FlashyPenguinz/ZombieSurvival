@@ -85,10 +85,15 @@ public class Entity {
 		this.y += dy;
 	}
 	
+	public void setPosition(float x, float y) {
+		this.x = x;
+		this.y = y;
+	}
+	
 	public void increasePositionWithServerUpdate(float dx, float dy) {
 		this.x += dx;
 		this.y += dy;
-		Packet03Move movePacket = new Packet03Move(id, dx, dy);
+		Packet03Move movePacket = new Packet03Move(id, x, y);
 		Client.getInstance().sendData(movePacket.getData());
 	}
 

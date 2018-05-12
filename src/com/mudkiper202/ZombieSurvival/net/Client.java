@@ -85,7 +85,7 @@ public class Client extends Thread {
 			 Packet03Move movePacket = new Packet03Move(data);
 			 Entity movePlayer = getEntityById(movePacket.getId());
 			 if(movePlayer != null) {
-				 movePlayer.increasePosition(movePacket.getX(), movePacket.getY());
+				 movePlayer.setPosition(movePacket.getX(), movePacket.getY());
 			 }
 			 break;
 		 case ROTATION:
