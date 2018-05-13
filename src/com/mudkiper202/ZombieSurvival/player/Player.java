@@ -41,11 +41,14 @@ public class Player extends Entity {
 				GameConstants.TILE_SIZE - 35);
 	}
 
+	public void updateBullets() {
+		gun.update();
+	}
+	
 	public void update() {
 		checkInputs();
 		calculateRotation();
 		updateAABB(getX(), getY());
-		gun.update();
 	}
 
 	@Override

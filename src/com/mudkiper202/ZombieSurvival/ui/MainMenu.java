@@ -38,7 +38,8 @@ public class MainMenu {
 						e.printStackTrace();
 					}
 					gm.getPlayer().setId(
-							gm.getEntityManager().getEntities().size());
+							gm.getEntityManager().getLatestEntityId()+1);
+					System.out.println(gm.getPlayer().getId());
 					gm.getPlayer().setUsername(username);
 					Packet02PlayerChange changePacket = new Packet02PlayerChange(
 							0, gm.getPlayer().getId(), username, gm.getPlayer()

@@ -53,6 +53,17 @@ public class EntityManager {
 		return (getPlayerById(id) != null);
 	}
 	
+	public int getLatestEntityId() {
+		int id = -1;
+		for (NetEntity entity: entities) {
+			if(id == -1)
+				id = entity.getId();
+			else if(entity.getId() > id)
+				id = entity.getId();
+		}
+		return id;
+	}
+	
 	public List<NetEntity> getEntities() {
 		return entities;
 	}

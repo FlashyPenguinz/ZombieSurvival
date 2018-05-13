@@ -61,6 +61,7 @@ public class GameManager {
 			} else {
 				pauseMenu.update();
 			}
+			player.updateBullets();
 		}
 	}
 
