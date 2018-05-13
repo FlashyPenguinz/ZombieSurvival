@@ -7,13 +7,11 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import com.mudkiper202.ZombieSurvival.entities.Entity;
 import com.mudkiper202.ZombieSurvival.game.GameManager;
 import com.mudkiper202.ZombieSurvival.net.packets.Packet;
 import com.mudkiper202.ZombieSurvival.net.packets.Packet00Login;
-import com.mudkiper202.ZombieSurvival.net.packets.Packet02EntityChange;
-import com.mudkiper202.ZombieSurvival.net.packets.Packet03Move;
-import com.mudkiper202.ZombieSurvival.net.packets.Packet04Rotation;
+import com.mudkiper202.ZombieSurvival.net.packets.Packet02PlayerChange;
+import com.mudkiper202.ZombieSurvival.net.packets.Packet03EntityMove;
 import com.mudkiper202.ZombieSurvival.net.packets.PacketType;
 
 public class Client extends Thread {
@@ -21,7 +19,7 @@ public class Client extends Thread {
 	private static Client client;
 
 	public boolean connected = false;
-	
+
 	private GameManager gm;
 
 	private DatagramSocket socket;
@@ -62,51 +60,31 @@ public class Client extends Thread {
 	private void parsePacket(byte[] data, InetAddress ipAddress, int port) {
 		String message = new String(data).trim();
 		PacketType type = Packet.lookupPacket(message.substring(0, 2));
-		switch (type) {
-		default:
-		case INVALID:
-			break;
-		case LOGIN:
+		if (type == PacketType.LOGIN) {
 			Packet00Login loginPacket = new Packet00Login(data);
 			System.out.println("[" + ipAddress.getHostAddress() + ":" + port
 					+ "] " + loginPacket.getUsername() + " has connected...");
-			break;
-		case ENTITY_CHANGE:
-			Packet02EntityChange changePacket = new Packet02EntityChange(data);
-			if (changePacket.getType() == 0) {
-				gm.addEntity(changePacket.getId(), changePacket.getX(),
-						changePacket.getY(), changePacket.getRotation(),
-						changePacket.getTextureName(), changePacket.getTexX(), changePacket.getTexY());
+		} else if (type == PacketType.PLAYER_CHANGE) {
+			Packet02PlayerChange packet = new Packet02PlayerChange(data);
+			if (packet.getType() == 0) {
+				gm.getEntityManager().addEntity(
+						new NetPlayer(packet.getId(), packet.getUsername(),
+								packet.getX(), packet.getY(), packet
+										.getTextureName(), packet.getTexX(),
+								packet.getTexY()));
 			} else {
-				gm.removeEntity(changePacket.getId());
+				gm.getEntityManager().removeEntityById(packet.getId());
 			}
-			break;
-		 case MOVE:
-			 Packet03Move movePacket = new Packet03Move(data);
-			 Entity movePlayer = getEntityById(movePacket.getId());
-			 if(movePlayer != null) {
-				 movePlayer.setPosition(movePacket.getX(), movePacket.getY());
-			 }
-			 break;
-		 case ROTATION:
-			 Packet04Rotation rotationPacket = new Packet04Rotation(data);
-			 Entity rotationPlayer = getEntityById(rotationPacket.getId());
-			 if(rotationPlayer != null) {
-				 rotationPlayer.setRotation(rotationPacket.getRotation());
-			 }
-			 break;
+		} else if (type == PacketType.ENTITY_MOVE) {
+			Packet03EntityMove packet = new Packet03EntityMove(data);
+			NetEntity entity = gm.getEntityManager().getEntityById(packet.getId());
+			if (entity != null) {
+				entity.setPosition(packet.getX(), packet.getY());
+				entity.setRotation(packet.getRotation());
+			}
 		}
 	}
 
-	public Entity getEntityById(int id) {
-		for(Entity entity: gm.getEntities()) {
-			if(entity.getId() == id) {
-				return entity;
-			}
-		}
-		return null;
-	}
-	
 	public void sendData(byte[] data) {
 		DatagramPacket packet = new DatagramPacket(data, data.length,
 				ipAddress, port);

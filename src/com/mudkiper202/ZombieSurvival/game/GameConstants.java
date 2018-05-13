@@ -14,7 +14,9 @@ public class GameConstants {
 	public static final TextureAtlas MAP_ATLAS = new TextureAtlas("tileAtlas");
 
 	public static final int TILE_SIZE = 64;
-
+	
 	public static final String GAME_FONT = "Times New Roman";
+	public static final int USERNAME_SIZE = 16;
+	public static final float USERNAME_Y = 30;
 
 }

@@ -7,8 +7,7 @@ import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
 import com.mudkiper202.ZombieSurvival.game.GameConstants;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
 import com.mudkiper202.ZombieSurvival.net.Client;
-import com.mudkiper202.ZombieSurvival.net.packets.Packet03Move;
-import com.mudkiper202.ZombieSurvival.net.packets.Packet04Rotation;
+import com.mudkiper202.ZombieSurvival.net.packets.Packet03EntityMove;
 
 public class Entity {
 
@@ -19,10 +18,11 @@ public class Entity {
 
 	private TextureAtlas texture;
 	private int texX, texY;
-	private String textureName;
 
 	private float rotation;
-
+	
+	private boolean edited = false;
+	
 	public Entity(int id, float x, float y, TextureAtlas texture, int texX, int texY, float rotation) {
 		this.id = id;
 		this.x = x;
@@ -35,30 +35,7 @@ public class Entity {
 		this.rotation = rotation;
 	}
 	
-	public Entity(int id, float x, float y, String textureName, int texX, int texY, float rotation) {
-		this.id = id;
-		this.x = x;
-		this.y = y;
-		this.width = GameConstants.TILE_SIZE;
-		this.height = GameConstants.TILE_SIZE;
-		this.textureName = textureName;
-		System.out.println("Makeing " + textureName);
-		this.texX = texX;
-		this.texY = texY;
-		this.rotation = rotation;
-	}
-
-	public void checkForTextureAtlas() {
-		if(this.texture == null) {
-			this.texture = new TextureAtlas(textureName);
-		}
-	}
-	
 	public void draw() {
-		if(this.textureName != null) {
-			//System.out.println("Makeing " + textureName);
-			this.texture = new TextureAtlas(textureName);
-		}
 		float[] texCoords = texture.getTextureCoords(texX, texY);
 		GL11.glPushMatrix();
 		Artist.drawTexturedQuad(x, y, width, height, rotation,
@@ -68,10 +45,6 @@ public class Entity {
 	}
 	
 	public void draw(float x, float y) {
-		if(this.texture == null) {
-			this.texture = new TextureAtlas(textureName);
-			return;
-		}
 		float[] texCoords = texture.getTextureCoords(texX, texY);
 		GL11.glPushMatrix();
 		Artist.drawTexturedQuad(x, y, width, height, rotation,
@@ -83,28 +56,25 @@ public class Entity {
 	public void increasePosition(float dx, float dy) {
 		this.x += dx;
 		this.y += dy;
+		edited = true;
 	}
 	
 	public void setPosition(float x, float y) {
 		this.x = x;
 		this.y = y;
-	}
-	
-	public void increasePositionWithServerUpdate(float dx, float dy) {
-		this.x += dx;
-		this.y += dy;
-		Packet03Move movePacket = new Packet03Move(id, x, y);
-		Client.getInstance().sendData(movePacket.getData());
+		edited = true;
 	}
 
 	public void setRotation(float rot) {
 		this.rotation = rot;
 	}
 	
-	public void setRotationWithServerUpdate(float rot) {
-		this.rotation = rot;
-		Packet04Rotation rotationPacket = new Packet04Rotation(id, rot);
-		Client.getInstance().sendData(rotationPacket.getData());
+	public void updateServer() {
+		if(edited) {
+			Packet03EntityMove movePacket = new Packet03EntityMove(id, x, y, rotation);
+			Client.getInstance().sendData(movePacket.getData());
+		}
+		edited = false;
 	}
 
 	public void setTextureCoords(int texX, int texY) {

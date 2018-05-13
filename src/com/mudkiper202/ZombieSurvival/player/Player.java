@@ -1,9 +1,12 @@
 package com.mudkiper202.ZombieSurvival.player;
 
+import java.awt.Font;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.Color;
 
 import com.mudkiper202.ZombieSurvival.data.AABB;
 import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
@@ -12,19 +15,26 @@ import com.mudkiper202.ZombieSurvival.game.GameConstants;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
 import com.mudkiper202.ZombieSurvival.helpers.Timer;
 import com.mudkiper202.ZombieSurvival.map.Map;
+import com.mudkiper202.ZombieSurvival.ui.Text;
 
 public class Player extends Entity {
 
+	private Text username;
+	
 	private Map map;
 
 	private Gun gun;
 
 	private AABB aabb;
 
+	private float lastAngle = 0;
+	
 	private final float SPEED = 2;
 
-	public Player(Map map, float x, float y, TextureAtlas texture) {
+	public Player(String username, Map map, float x, float y, TextureAtlas texture) {
 		super(0, x, y, texture, 0, 0, 0);
+		this.username = new Text(x, y-GameConstants.USERNAME_Y, username, Font.BOLD, GameConstants.USERNAME_SIZE);
+		this.username.setColor(Color.white);
 		this.map = map;
 		this.gun = new Gun(this);
 		this.aabb = new AABB(0, 0, GameConstants.TILE_SIZE - 35,
@@ -46,6 +56,9 @@ public class Player extends Entity {
 				GameConstants.DISPLAY_HEIGHT / 2, getWidth(), getHeight(),
 				getRotation(), getTextureAtlas().getTexture(), 0, 0, 1, 1);
 		GL11.glPopMatrix();
+		this.username.setX(GameConstants.DISPLAY_WIDTH / 2);
+		this.username.setY((GameConstants.DISPLAY_HEIGHT / 2)-GameConstants.USERNAME_Y);
+		this.username.draw();
 	}
 
 	public Map getMap() {
@@ -72,7 +85,7 @@ public class Player extends Entity {
 		if (checkCollisions())
 			yIncrease = 0;
 		if (!(xIncrease == 0 && yIncrease == 0))
-			increasePositionWithServerUpdate(xIncrease * Timer.delta, yIncrease * Timer.delta);
+			increasePosition(xIncrease * Timer.delta, yIncrease * Timer.delta);
 	}
 
 	private boolean checkCollisions() {
@@ -124,6 +137,17 @@ public class Player extends Entity {
 		float angle = (float) (Math.toDegrees(Math.asin(yDif / hypotonuse)) + 90);
 		if (Mouse.getX() < Display.getWidth() / 2)
 			angle = -angle;
-		super.setRotationWithServerUpdate(angle);
+		if(angle != lastAngle)
+			super.setRotation(angle);
+		lastAngle = angle;
 	}
+	
+	public String getUsername() {
+		return username.getText();
+	}
+	
+	public void setUsername(String username) {
+		this.username.setText(username);
+	}
+	
 }

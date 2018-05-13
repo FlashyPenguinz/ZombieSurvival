@@ -1,17 +1,15 @@
 package com.mudkiper202.ZombieSurvival.game;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
-import com.mudkiper202.ZombieSurvival.entities.Entity;
+import com.mudkiper202.ZombieSurvival.entities.EntityManager;
 import com.mudkiper202.ZombieSurvival.map.Map;
 import com.mudkiper202.ZombieSurvival.net.Client;
+import com.mudkiper202.ZombieSurvival.net.NetEntity;
 import com.mudkiper202.ZombieSurvival.player.Cursor;
 import com.mudkiper202.ZombieSurvival.player.Player;
 import com.mudkiper202.ZombieSurvival.ui.MainMenu;
@@ -31,15 +29,15 @@ public class GameManager {
 	private Cursor cursor;
 
 	private Client client;
-	private List<Entity> entities;
+	private EntityManager em;
 
-	public GameManager(Map map) {
+	public GameManager() {
 		this.mainMenu = new MainMenu(this);
 		this.pauseMenu = new PauseMenu();
-		this.map = map;
-		this.player = new Player(map, 50, 50, new TextureAtlas("player"));
+		this.map = new Map(Map.loadMapFile("map"));
+		this.player = new Player("", map, 50, 50, new TextureAtlas("player"));
 		this.cursor = new Cursor("cursor");
-		this.entities = new ArrayList<Entity>();
+		this.em = new EntityManager(this);
 		this.client = new Client(this, "25.13.40.96", 8192);
 	}
 
@@ -55,6 +53,7 @@ public class GameManager {
 				}
 				
 				player.update();
+				player.updateServer();
 				cursor.update();
 
 				map.x = -player.getX() + Display.getWidth() / 2;
@@ -71,9 +70,8 @@ public class GameManager {
 		} else if (state == GameState.PLAYING) {
 			if (player != null) {
 				map.draw();
-				for (Entity entity : entities) {
-					if (!(entity instanceof Player)) {
-						entity.checkForTextureAtlas();
+				for (NetEntity entity : em.getEntities()) {
+					if(entity.getId() != player.getId()) {
 						entity.draw(
 								(-(player.getX() - entity.getX()))
 										+ (Display.getWidth() / 2),
@@ -102,23 +100,8 @@ public class GameManager {
 		return player;
 	}
 
-	public List<Entity> getEntities() {
-		return entities;
-	}
-
-	public void addEntity(int id, float x, float y, float rotation,
-			String textureName, int texX, int texY) {
-		entities.add(new Entity(id, x, y, textureName, texX,
-				texY, rotation));
-	}
-	
-	public void removeEntity(int id) {
-		for (int i = 0; i < entities.size(); i++) {
-			if(entities.get(i).getId() == id) {
-				entities.remove(i);
-				return;
-			}
-		}
+	public EntityManager getEntityManager() {
+		return em;
 	}
 
 }

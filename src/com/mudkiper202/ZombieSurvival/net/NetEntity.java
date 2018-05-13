@@ -1,8 +1,11 @@
 package com.mudkiper202.ZombieSurvival.net;
 
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
+import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
 import com.mudkiper202.ZombieSurvival.game.GameConstants;
+import com.mudkiper202.ZombieSurvival.helpers.Artist;
 
 public class NetEntity {
 
@@ -11,23 +14,36 @@ public class NetEntity {
 	private float x, y;
 	private float width, height;
 
-	private String texture;
+	private String textureName;
+	private TextureAtlas texture;
 	private int texX, texY;
 
 	private float rotation;
 
-	public NetEntity(int id, float x, float y, String texture, int texX, int texY, float rotation) {
+	public NetEntity(int id, float x, float y, String textureName, int texX, int texY, float rotation) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.width = GameConstants.TILE_SIZE;
 		this.height = GameConstants.TILE_SIZE;
-		this.texture = texture;
+		this.textureName = textureName;
 		this.texX = texX;
 		this.texY = texY;
 		this.rotation = rotation;
 	}
 
+	public void draw(float x, float y) {
+		if(this.texture == null) {
+			this.texture = new TextureAtlas(textureName);
+		}
+		float[] texCoords = texture.getTextureCoords(texX, texY);
+		GL11.glPushMatrix();
+		Artist.drawTexturedQuad(x, y, width, height, rotation,
+				texture.getTexture(), texCoords[0], texCoords[1], texCoords[2],
+				texCoords[3]);
+		GL11.glPopMatrix();
+	}
+	
 	public void increasePosition(float dx, float dy) {
 		this.x += dx;
 		this.y += dy;
@@ -64,7 +80,7 @@ public class NetEntity {
 	}
 
 	public String getTextureName() {
-		return texture;
+		return textureName;
 	}
 
 	public Vector2f getTextureCoords() {

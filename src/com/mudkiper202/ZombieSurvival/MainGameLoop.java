@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.mudkiper202.ZombieSurvival.game.GameManager;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
-import com.mudkiper202.ZombieSurvival.map.Map;
 import com.mudkiper202.ZombieSurvival.net.packets.Packet01Disconnect;
 import com.mudkiper202.ZombieSurvival.sound.AudioMaster;
 
@@ -23,10 +22,8 @@ public class MainGameLoop {
 		
 		AudioMaster.create();
 		AudioMaster.setListenerData();
-		
-		Map map = new Map(Map.loadMapFile("map"));
 
-		GameManager gm = new GameManager(map);
+		GameManager gm = new GameManager();
 
 		while (!Display.isCloseRequested()) {
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
