@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mudkiper202.ZombieSurvival.game.GameManager;
-import com.mudkiper202.ZombieSurvival.net.NetEntity;
-import com.mudkiper202.ZombieSurvival.net.NetPlayer;
+import com.mudkiper202.ZombieSurvival.net.entities.NetEntity;
+import com.mudkiper202.ZombieSurvival.net.entities.NetPlayer;
 
 public class EntityManager {
 

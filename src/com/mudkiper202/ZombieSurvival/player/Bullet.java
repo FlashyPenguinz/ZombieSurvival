@@ -9,6 +9,9 @@ import com.mudkiper202.ZombieSurvival.game.GameConstants;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
 import com.mudkiper202.ZombieSurvival.helpers.Timer;
 import com.mudkiper202.ZombieSurvival.map.Map;
+import com.mudkiper202.ZombieSurvival.net.entities.NetBullet;
+import com.mudkiper202.ZombieSurvival.net.packets.Packet04BulletChange;
+import com.mudkiper202.ZombieSurvival.net.packets.Packet05BulletMove;
 
 public class Bullet {
 
@@ -18,19 +21,25 @@ public class Bullet {
 	private Player player;
 	private Map map;
 
+	private int id;
+	
 	private List<Bullet> toRemoveBullets;
 	
 	private float x, y;
 
 	private float rotation;
 
-	public Bullet(Player player, float x, float y, float rot, List<Bullet> toRemoveBullets) {
+	public Bullet(int id, Player player, float x, float y, float rot, List<Bullet> toRemoveBullets) {
+		this.id = id;
 		this.player = player;
 		this.map = player.getMap();
 		this.x = x;
 		this.y = y;
 		this.rotation = rot;
 		this.toRemoveBullets = toRemoveBullets;
+		player.getGameManager().getEntityManager().addEntity(new NetBullet(id, player.getId(), x, y, rot));
+		Packet04BulletChange packet = new Packet04BulletChange(0, id, player.getId(), x, y, rot);
+		player.getGameManager().getClient().sendData(packet.getData());
 	}
 
 	public void update() {
@@ -42,6 +51,8 @@ public class Bullet {
 	public void move(float distance) {
 		x += SPEED * Timer.delta * Math.sin(Math.toRadians(rotation));
 		y -= SPEED * Timer.delta * Math.cos(Math.toRadians(rotation));
+		Packet05BulletMove packet = new Packet05BulletMove(id, x, y);
+		player.getGameManager().getClient().sendData(packet.getData());
 	}
 	
 	public void draw() {
@@ -56,6 +67,9 @@ public class Bullet {
 
 	public void remove() {
 		toRemoveBullets.add(this);
+		player.getGameManager().getEntityManager().removeEntityById(id);
+		Packet04BulletChange packet = new Packet04BulletChange(1, id, player.getId(), x, y, rotation);
+		player.getGameManager().getClient().sendData(packet.getData());
 	}
 	
 	private boolean checkCollisions() {
@@ -69,6 +83,10 @@ public class Bullet {
 				.getType().isCollidable())
 			return true;
 		return false;
+	}
+	
+	public int getId() {
+		return id;
 	}
 
 }

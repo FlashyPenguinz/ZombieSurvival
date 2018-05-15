@@ -8,10 +8,15 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import com.mudkiper202.ZombieSurvival.game.GameManager;
+import com.mudkiper202.ZombieSurvival.net.entities.NetBullet;
+import com.mudkiper202.ZombieSurvival.net.entities.NetEntity;
+import com.mudkiper202.ZombieSurvival.net.entities.NetPlayer;
 import com.mudkiper202.ZombieSurvival.net.packets.Packet;
 import com.mudkiper202.ZombieSurvival.net.packets.Packet00Login;
 import com.mudkiper202.ZombieSurvival.net.packets.Packet02PlayerChange;
 import com.mudkiper202.ZombieSurvival.net.packets.Packet03EntityMove;
+import com.mudkiper202.ZombieSurvival.net.packets.Packet04BulletChange;
+import com.mudkiper202.ZombieSurvival.net.packets.Packet05BulletMove;
 import com.mudkiper202.ZombieSurvival.net.packets.PacketType;
 
 public class Client extends Thread {
@@ -77,10 +82,28 @@ public class Client extends Thread {
 			}
 		} else if (type == PacketType.ENTITY_MOVE) {
 			Packet03EntityMove packet = new Packet03EntityMove(data);
-			NetEntity entity = gm.getEntityManager().getEntityById(packet.getId());
+			NetEntity entity = gm.getEntityManager().getEntityById(
+					packet.getId());
 			if (entity != null) {
 				entity.setPosition(packet.getX(), packet.getY());
 				entity.setRotation(packet.getRotation());
+			}
+		} else if (type == PacketType.BULLET_CHANGE) {
+			Packet04BulletChange packet = new Packet04BulletChange(data);
+			if (packet.getType() == 0) {
+				gm.getEntityManager().addEntity(
+						new NetBullet(packet.getId(), packet.getPlayerId(),
+								packet.getX(), packet.getY(), packet
+										.getRotation()));
+			} else {
+				gm.getEntityManager().removeEntityById(packet.getId());
+			}
+		} else if (type == PacketType.BULLET_MOVE) {
+			Packet05BulletMove packet = new Packet05BulletMove(data);
+			NetEntity entity = gm.getEntityManager().getEntityById(
+					packet.getId());
+			if (entity != null) {
+				entity.setPosition(packet.getX(), packet.getY());
 			}
 		}
 	}

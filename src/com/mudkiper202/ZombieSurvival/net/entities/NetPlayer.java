@@ -1,4 +1,4 @@
-package com.mudkiper202.ZombieSurvival.net;
+package com.mudkiper202.ZombieSurvival.net.entities;
 
 import java.awt.Font;
 

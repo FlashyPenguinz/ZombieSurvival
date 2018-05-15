@@ -9,7 +9,8 @@ import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
 import com.mudkiper202.ZombieSurvival.entities.EntityManager;
 import com.mudkiper202.ZombieSurvival.map.Map;
 import com.mudkiper202.ZombieSurvival.net.Client;
-import com.mudkiper202.ZombieSurvival.net.NetEntity;
+import com.mudkiper202.ZombieSurvival.net.entities.NetEntity;
+import com.mudkiper202.ZombieSurvival.player.Bullet;
 import com.mudkiper202.ZombieSurvival.player.Cursor;
 import com.mudkiper202.ZombieSurvival.player.Player;
 import com.mudkiper202.ZombieSurvival.ui.MainMenu;
@@ -35,7 +36,7 @@ public class GameManager {
 		this.mainMenu = new MainMenu(this);
 		this.pauseMenu = new PauseMenu();
 		this.map = new Map(Map.loadMapFile("map"));
-		this.player = new Player("", map, 50, 50, new TextureAtlas("player"));
+		this.player = new Player("", this, 50, 50, new TextureAtlas("player"));
 		this.cursor = new Cursor("cursor");
 		this.em = new EntityManager(this);
 		this.client = new Client(this, "25.13.40.96", 8192);
@@ -72,7 +73,7 @@ public class GameManager {
 			if (player != null) {
 				map.draw();
 				for (NetEntity entity : em.getEntities()) {
-					if(entity.getId() != player.getId()) {
+					if(!isIdLocal(entity.getId())) {
 						entity.draw(
 								(-(player.getX() - entity.getX()))
 										+ (Display.getWidth() / 2),
@@ -89,6 +90,15 @@ public class GameManager {
 
 	}
 
+	private boolean isIdLocal(int id) {
+		if(player.getId() == id)
+			return true;
+		for(Bullet bullet: player.getBullets())
+			if(bullet.getId() == id)
+				return true;
+		return false;
+	}
+	
 	public void setState(GameState state) {
 		this.state = state;
 	}
@@ -103,6 +113,10 @@ public class GameManager {
 
 	public EntityManager getEntityManager() {
 		return em;
+	}
+	
+	public Map getMap() {
+		return map;
 	}
 
 }

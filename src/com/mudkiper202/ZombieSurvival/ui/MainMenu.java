@@ -9,7 +9,7 @@ import org.lwjgl.opengl.Display;
 
 import com.mudkiper202.ZombieSurvival.game.GameManager;
 import com.mudkiper202.ZombieSurvival.game.GameState;
-import com.mudkiper202.ZombieSurvival.net.NetPlayer;
+import com.mudkiper202.ZombieSurvival.net.entities.NetPlayer;
 import com.mudkiper202.ZombieSurvival.net.packets.Packet00Login;
 import com.mudkiper202.ZombieSurvival.net.packets.Packet02PlayerChange;
 
@@ -39,7 +39,6 @@ public class MainMenu {
 					}
 					gm.getPlayer().setId(
 							gm.getEntityManager().getLatestEntityId()+1);
-					System.out.println(gm.getPlayer().getId());
 					gm.getPlayer().setUsername(username);
 					Packet02PlayerChange changePacket = new Packet02PlayerChange(
 							0, gm.getPlayer().getId(), username, gm.getPlayer()

@@ -20,7 +20,7 @@ public class Gun {
 
 	private Source soundPlayer;
 	private int soundBuffer;
-	
+
 	public Gun(Player player) {
 		this.player = player;
 		this.soundPlayer = new Source();
@@ -33,13 +33,13 @@ public class Gun {
 			makeBullet();
 			clicked = true;
 		}
-		
+
 		if (!Mouse.isButtonDown(0))
 			clicked = false;
-		
-		if(GameManager.paused == true)
+
+		if (GameManager.paused == true)
 			clicked = true;
-		
+
 		for (Bullet bullet : bullets)
 			bullet.update();
 		for (Bullet bullet : toRemoveBullets)
@@ -53,10 +53,16 @@ public class Gun {
 	}
 
 	private void makeBullet() {
-		Bullet bullet = new Bullet(player, player.getX(), player.getY(),
+		Bullet bullet = new Bullet(player.getGameManager().getEntityManager()
+				.getLatestEntityId() + 1, player, player.getX(), player.getY(),
 				player.getRotation(), toRemoveBullets);
 		bullets.add(bullet);
-		
+
 		soundPlayer.play(soundBuffer);
 	}
+	
+	public List<Bullet> getBullets() {
+		return bullets;
+	}
+	
 }

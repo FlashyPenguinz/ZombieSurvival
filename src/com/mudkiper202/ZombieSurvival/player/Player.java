@@ -1,6 +1,7 @@
 package com.mudkiper202.ZombieSurvival.player;
 
 import java.awt.Font;
+import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -12,6 +13,7 @@ import com.mudkiper202.ZombieSurvival.data.AABB;
 import com.mudkiper202.ZombieSurvival.data.TextureAtlas;
 import com.mudkiper202.ZombieSurvival.entities.Entity;
 import com.mudkiper202.ZombieSurvival.game.GameConstants;
+import com.mudkiper202.ZombieSurvival.game.GameManager;
 import com.mudkiper202.ZombieSurvival.helpers.Artist;
 import com.mudkiper202.ZombieSurvival.helpers.Timer;
 import com.mudkiper202.ZombieSurvival.map.Map;
@@ -20,7 +22,8 @@ import com.mudkiper202.ZombieSurvival.ui.Text;
 public class Player extends Entity {
 
 	private Text username;
-	
+
+	private GameManager gm;
 	private Map map;
 
 	private Gun gun;
@@ -31,11 +34,12 @@ public class Player extends Entity {
 	
 	private final float SPEED = 2;
 
-	public Player(String username, Map map, float x, float y, TextureAtlas texture) {
+	public Player(String username, GameManager gm, float x, float y, TextureAtlas texture) {
 		super(0, x, y, texture, 0, 0, 0);
 		this.username = new Text(x, y-GameConstants.USERNAME_Y, username, Font.BOLD, GameConstants.USERNAME_SIZE);
 		this.username.setColor(Color.white);
-		this.map = map;
+		this.gm = gm;
+		this.map = gm.getMap();
 		this.gun = new Gun(this);
 		this.aabb = new AABB(0, 0, GameConstants.TILE_SIZE - 35,
 				GameConstants.TILE_SIZE - 35);
@@ -151,6 +155,14 @@ public class Player extends Entity {
 	
 	public void setUsername(String username) {
 		this.username.setText(username);
+	}
+	
+	public GameManager getGameManager() {
+		return gm;
+	}
+	
+	public List<Bullet> getBullets() {
+		return gun.getBullets();
 	}
 	
 }
