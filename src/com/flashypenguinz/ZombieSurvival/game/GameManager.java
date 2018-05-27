@@ -1,5 +1,11 @@
 package com.flashypenguinz.ZombieSurvival.game;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -22,7 +28,7 @@ import com.flashypenguinz.ZombieSurvival.user.database.DatabaseManager;
 
 public class GameManager {
 
-	private DatabaseManager db;
+	private DatabaseManager dm;
 	private EntityManager em;
 	private UIManager um;
 
@@ -34,7 +40,7 @@ public class GameManager {
 
 	public static boolean paused = false;
 
-	private User user;
+	public User user;
 	
 	private Map map;
 	private Player player;
@@ -45,8 +51,9 @@ public class GameManager {
 		this.map = new Map(Map.loadMapFile("map"));
 		this.player = new Player("", this, 50, 50, new TextureAtlas("player"));
 		this.cursor = new Cursor("cursor");
-		this.db = new DatabaseManager();
+		this.dm = new DatabaseManager();
 		this.em = new EntityManager(this);
+		checkForCache();
 		this.um = new UIManager(this);
 		this.client = new Client(this, "25.13.40.96", 8192);
 	}
@@ -70,8 +77,9 @@ public class GameManager {
 				pauseMenu.update();
 			}
 			player.updateBullets();
+		} else {
+			um.update();
 		}
-		um.update();
 	}
 
 	public void draw() {
@@ -108,9 +116,49 @@ public class GameManager {
 	}
 	
 	public void cleanUp() {		
-		db.closeConnection();
+		dm.closeConnection();
 		if(client.connected)
 			client.sendData(new Packet01Disconnect().getData());
+		//saveToCache();
+	}
+	
+	private void checkForCache() {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("userData.txt"));
+			String line = "";
+			String email = "";
+			String password = "";
+			while((line=reader.readLine()) != null) {
+				String[] data = line.split(":");
+				if(data[0].equals("email"))
+					email = data[1];
+				if(data[0].equals("password"))
+					password = data[1];
+			}
+			reader.close();
+			if(email.isEmpty()||password.isEmpty())
+				return;
+			String username = dm.getUserDatabase().getUsername(email);
+			user = new User(dm.getUserDatabase().getUserId(username), username, email, password, dm.getUserDatabase().getUserLevel(username));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void saveToCache() {
+		if(user != null) {
+			try {
+				BufferedWriter writer = new BufferedWriter(new FileWriter("userData.txt"));
+				writer.write("id:"+user.getUserId());
+				writer.write("\nusername:"+user.getUsername());
+				writer.write("\nemail:"+user.getEmail());
+				writer.write("\npassword:"+user.getPassword());
+				writer.write("\nlevel:"+user.getUserLevel());
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void setState(GameState state) {
@@ -137,16 +185,16 @@ public class GameManager {
 		return state;
 	}
 	
-	public User getUser() {
-		return user;
-	}
-	
 	public void makeUser(User user) {
 		this.user = user;
 	}
 	
 	public void setUIState(UIState state) {
 		um.setState(state);
+	}
+	
+	public DatabaseManager getDatabaseManager() {
+		return dm;
 	}
 	
 }

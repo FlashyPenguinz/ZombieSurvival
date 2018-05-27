@@ -32,7 +32,7 @@ public class Player extends Entity {
 
 	private float lastAngle = 0;
 	
-	private final float SPEED = 2;
+	private final float SPEED = 200;
 
 	public Player(String username, GameManager gm, float x, float y, TextureAtlas texture) {
 		super(0, x, y, texture, 0, 0, 0);

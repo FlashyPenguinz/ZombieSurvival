@@ -7,13 +7,15 @@ import org.newdawn.slick.Color;
 public class TextButton implements Component {
 
 	private Text text;
-
+	private Color lastColor;
+	
 	private Runnable action;
 
 	private boolean clicked = false;
 	
 	public TextButton(Text text, Runnable action) {
 		this.text = text;
+		this.lastColor = text.getColor();
 		this.action = action;
 	}
 
@@ -31,7 +33,7 @@ public class TextButton implements Component {
 				clicked = true;
 			}
 		} else {
-			text.setColor(Color.white);
+			text.setColor(lastColor);
 		}
 		if(!Mouse.isButtonDown(0))
 			clicked = false;

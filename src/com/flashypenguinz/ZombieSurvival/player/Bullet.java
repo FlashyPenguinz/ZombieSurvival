@@ -15,7 +15,7 @@ import com.flashypenguinz.ZombieSurvival.net.packets.Packet05BulletMove;
 
 public class Bullet {
 
-	private final float SPEED = 8;
+	private final float SPEED = 800;
 	private final float WIDTH = 10, HEIGHT = 20;
 
 	private Player player;
