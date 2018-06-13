@@ -31,12 +31,14 @@ public class Player extends Entity {
 	private AABB aabb;
 
 	private float lastAngle = 0;
-	
+
 	private final float SPEED = 200;
 
-	public Player(String username, GameManager gm, float x, float y, TextureAtlas texture) {
+	public Player(String username, GameManager gm, float x, float y,
+			TextureAtlas texture) {
 		super(0, x, y, texture, 0, 0, 0);
-		this.username = new Text(x, y-GameConstants.USERNAME_Y, username, Font.BOLD, GameConstants.USERNAME_SIZE);
+		this.username = new Text(x, y - GameConstants.USERNAME_Y, username,
+				Font.BOLD, GameConstants.USERNAME_SIZE);
 		this.username.setColor(Color.white);
 		this.gm = gm;
 		this.map = gm.getMap();
@@ -48,7 +50,7 @@ public class Player extends Entity {
 	public void updateBullets() {
 		gun.update();
 	}
-	
+
 	public void update() {
 		checkInputs();
 		calculateRotation();
@@ -64,7 +66,8 @@ public class Player extends Entity {
 				getRotation(), getTextureAtlas().getTexture(), 0, 0, 1, 1);
 		GL11.glPopMatrix();
 		this.username.setX(GameConstants.DISPLAY_WIDTH / 2);
-		this.username.setY((GameConstants.DISPLAY_HEIGHT / 2)-GameConstants.USERNAME_Y);
+		this.username.setY((GameConstants.DISPLAY_HEIGHT / 2)
+				- GameConstants.USERNAME_Y);
 		this.username.draw();
 	}
 
@@ -97,33 +100,60 @@ public class Player extends Entity {
 
 	private boolean checkCollisions() {
 		if (aabb.getX() < 0
-				|| aabb.getX() + aabb.getWidth() > (map.size() * GameConstants.TILE_SIZE)
+				|| aabb.getX() + aabb.getWidth() > (map.sizeX() * GameConstants.TILE_SIZE)
 				|| aabb.getY() < 0
-				|| aabb.getY() + aabb.getHeight() > (map.size() * GameConstants.TILE_SIZE)) {
+				|| aabb.getY() + aabb.getHeight() > (map.sizeY() * GameConstants.TILE_SIZE)) {
 			updateAABB(getX(), getY());
 			return true;
 		}
-		if (map.getTile(
+		if (map.getTile(1,
 				(int) Math.floor(aabb.getX() / GameConstants.TILE_SIZE),
 				(int) Math.floor(aabb.getY() / GameConstants.TILE_SIZE))
-				.getType().isCollidable())
+				.getType().isCollidable()
+				|| map.getTile(
+						2,
+						(int) Math.floor(aabb.getX() / GameConstants.TILE_SIZE),
+						(int) Math.floor(aabb.getY() / GameConstants.TILE_SIZE))
+						.getType().isCollidable())
 			return true;
 		if (map.getTile(
+				1,
 				(int) Math.floor((aabb.getX() + aabb.getWidth())
 						/ GameConstants.TILE_SIZE),
 				(int) Math.floor(aabb.getY() / GameConstants.TILE_SIZE))
-				.getType().isCollidable())
+				.getType().isCollidable()
+				|| map.getTile(
+						2,
+						(int) Math.floor((aabb.getX() + aabb.getWidth())
+								/ GameConstants.TILE_SIZE),
+						(int) Math.floor(aabb.getY() / GameConstants.TILE_SIZE))
+						.getType().isCollidable())
 			return true;
 		if (map.getTile(
+				1,
 				(int) Math.floor((aabb.getX() + aabb.getWidth())
 						/ GameConstants.TILE_SIZE),
 				(int) Math.floor((aabb.getY() + aabb.getHeight())
-						/ GameConstants.TILE_SIZE)).getType().isCollidable())
+						/ GameConstants.TILE_SIZE)).getType().isCollidable()
+				|| map.getTile(
+						2,
+						(int) Math.floor((aabb.getX() + aabb.getWidth())
+								/ GameConstants.TILE_SIZE),
+						(int) Math.floor((aabb.getY() + aabb.getHeight())
+								/ GameConstants.TILE_SIZE)).getType()
+						.isCollidable())
 			return true;
 		if (map.getTile(
+				1,
 				(int) Math.floor(aabb.getX() / GameConstants.TILE_SIZE),
 				(int) Math.floor((aabb.getY() + aabb.getHeight())
-						/ GameConstants.TILE_SIZE)).getType().isCollidable())
+						/ GameConstants.TILE_SIZE)).getType().isCollidable()
+				|| map.getTile(
+						2,
+						(int) Math.floor(aabb.getX() / GameConstants.TILE_SIZE),
+						(int) Math.floor((aabb.getY() + aabb.getHeight())
+								/ GameConstants.TILE_SIZE)).getType()
+						.isCollidable())
 			return true;
 		return false;
 	}
@@ -144,25 +174,25 @@ public class Player extends Entity {
 		float angle = (float) (Math.toDegrees(Math.asin(yDif / hypotonuse)) + 90);
 		if (Mouse.getX() < Display.getWidth() / 2)
 			angle = -angle;
-		if(angle != lastAngle)
+		if (angle != lastAngle)
 			super.setRotation(angle);
 		lastAngle = angle;
 	}
-	
+
 	public String getUsername() {
 		return username.getText();
 	}
-	
+
 	public void setUsername(String username) {
 		this.username.setText(username);
 	}
-	
+
 	public GameManager getGameManager() {
 		return gm;
 	}
-	
+
 	public List<Bullet> getBullets() {
 		return gun.getBullets();
 	}
-	
+
 }

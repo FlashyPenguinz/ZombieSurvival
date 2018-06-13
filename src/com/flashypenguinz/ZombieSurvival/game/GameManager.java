@@ -48,7 +48,6 @@ public class GameManager {
 
 	public GameManager() {
 		this.pauseMenu = new PauseMenu();
-		this.map = new Map(Map.loadMapFile("map"));
 		this.player = new Player("", this, 50, 50, new TextureAtlas("player"));
 		this.cursor = new Cursor("cursor");
 		this.dm = new DatabaseManager();
@@ -145,6 +144,7 @@ public class GameManager {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void saveToCache() {
 		if(user != null) {
 			try {

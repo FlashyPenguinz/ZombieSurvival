@@ -73,14 +73,17 @@ public class Bullet {
 	}
 	
 	private boolean checkCollisions() {
-		if (x < 0 || x + WIDTH > (map.size() * GameConstants.TILE_SIZE)
-				|| y < 0 || y + HEIGHT > (map.size() * GameConstants.TILE_SIZE)) {
+		if (x < 0 || x + WIDTH > (map.sizeX() * GameConstants.TILE_SIZE)
+				|| y < 0 || y + HEIGHT > (map.sizeY() * GameConstants.TILE_SIZE)) {
 			return true;
 		}
-		if (map.getTile(
+		if (map.getTile(1,
 				(int) Math.floor((x+(WIDTH/2)) / GameConstants.TILE_SIZE),
 				(int) Math.floor((y+(HEIGHT/2)) / GameConstants.TILE_SIZE))
-				.getType().isCollidable())
+				.getType().isCollidable() || map.getTile(2,
+						(int) Math.floor((x+(WIDTH/2)) / GameConstants.TILE_SIZE),
+						(int) Math.floor((y+(HEIGHT/2)) / GameConstants.TILE_SIZE))
+						.getType().isCollidable())
 			return true;
 		return false;
 	}
