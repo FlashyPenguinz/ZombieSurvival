@@ -19,9 +19,13 @@ public class Map {
 	private Tile[][] layer1;
 	private Tile[][] layer2;
 	
+	private int[][][] rawMap;
+	
 	public Map(int[][][] layers) {
 		if (layers[0].length == 0 || layers[1].length == 0)
 			return;
+		
+		this.rawMap = layers;
 		
 		rows = layers[0].length;
 		cols = layers[0][0].length;
@@ -66,6 +70,10 @@ public class Map {
 		return rows;
 	}
 	
+	public int[][][] getRawMap() {
+		return rawMap;
+	}
+	
 	public static int[][][] loadMapFile(String path) {
 		BufferedReader reader = null;
 		try {
@@ -82,9 +90,17 @@ public class Map {
 			
 			String line;
 			
+			boolean gotEnd = false;
+			
 			while((line = reader.readLine())!=null) {
+				if(line.matches("END")) {
+					gotEnd = true;
+					prod += line+"\n";
+					continue;
+				}
 				columns = line.split(",").length;
-				rows++;
+				if(!gotEnd)
+					rows++;
 				prod += line+"\n";
 			}
 			
@@ -99,17 +115,15 @@ public class Map {
 				int[][] map = new int[rows][columns];
 				
 				while((line = mapReader.readLine())!=null) {
-					if(line.matches("\\[END\\]"))
+					if(line.matches("END"))
 						break;
-					columns = line.split(",").length;
-					rows++;
 					lines.add(line);
 				}
 				
 				for(int j = 0; j < columns; j++) {
 					int[] row = new int[lines.get(j).split(",").length];
 					for (int k = 0; k < row.length; k++) {
-						String number = (lines.get(i).split(",")[k].trim());
+						String number = (lines.get(j).split(",")[k].trim());
 						row[k] = Integer.valueOf(number);
 					}
 					map[j] = row;
@@ -126,7 +140,6 @@ public class Map {
 				finalMap[i] = map;
 				
 			}
-			
 			reader.close();
 			return finalMap;
 			

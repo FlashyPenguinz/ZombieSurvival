@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import com.flashypenguinz.ZombieSurvival.game.GameManager;
+import com.flashypenguinz.ZombieSurvival.map.Map;
 import com.flashypenguinz.ZombieSurvival.net.entities.NetBullet;
 import com.flashypenguinz.ZombieSurvival.net.entities.NetEntity;
 import com.flashypenguinz.ZombieSurvival.net.entities.NetPlayer;
@@ -17,6 +18,7 @@ import com.flashypenguinz.ZombieSurvival.net.packets.Packet02PlayerChange;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet03EntityMove;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet04BulletChange;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet05BulletMove;
+import com.flashypenguinz.ZombieSurvival.net.packets.Packet06MapInfo;
 import com.flashypenguinz.ZombieSurvival.net.packets.PacketType;
 
 public class Client extends Thread {
@@ -105,6 +107,9 @@ public class Client extends Thread {
 			if (entity != null) {
 				entity.setPosition(packet.getX(), packet.getY());
 			}
+		} else if(type == PacketType.MAP_INFO) {
+			Packet06MapInfo packet = new Packet06MapInfo(data);
+			gm.setMap(new Map(packet.getMap()));
 		}
 	}
 

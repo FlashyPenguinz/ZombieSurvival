@@ -43,7 +43,7 @@ public class MainMenu extends Page {
 						Packet00Login loginPacket = new Packet00Login(username);
 						gm.getClient().sendData(loginPacket.getData());
 						try {
-							Thread.sleep(2000);
+							Thread.sleep(5000);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

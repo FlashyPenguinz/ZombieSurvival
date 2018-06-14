@@ -180,6 +180,10 @@ public class GameManager {
 	public Map getMap() {
 		return map;
 	}
+	
+	public void setMap(Map map) {
+		this.map = map;
+	}
 
 	public GameState getState() {
 		return state;
