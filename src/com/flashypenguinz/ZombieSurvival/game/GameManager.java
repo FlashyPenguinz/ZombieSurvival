@@ -84,7 +84,7 @@ public class GameManager {
 	public void draw() {
 		if (state == GameState.PLAYING) {
 			if (player != null) {
-				map.draw();
+				map.draw(1);
 				for (NetEntity entity : em.getEntities()) {
 					if(!isIdLocal(entity.getId())) {
 						entity.draw(
@@ -95,6 +95,7 @@ public class GameManager {
 					}
 				}
 				player.draw();
+				map.draw(2);
 				cursor.draw();
 				if (paused)
 					pauseMenu.draw();

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.flashypenguinz.ZombieSurvival.game.GameConstants;
+import com.flashypenguinz.ZombieSurvival.helpers.Artist;
 
 public class Map {
 
@@ -47,12 +48,28 @@ public class Map {
 			}
 	}
 
-	public void draw() {
-		for (int x = 0; x < rows; x++)
-			for (int y = 0; y < cols; y++) {
-				layer1[x][y].draw(this.x, this.y);
-				layer2[x][y].draw(this.x, this.y);
-			}
+	public void draw(int layer) {
+		int exp = 8;
+		if(layer == 1) {
+			for (int x = -exp; x < rows+exp; x++)
+				for (int y = -exp; y < cols+exp; y++) {
+					try {
+						layer1[x][y].draw(this.x, this.y);
+					} catch (Exception e) {
+						float[] texCoords = GameConstants.MAP_ATLAS.getTextureCoords(
+								TileType.GRASS_FLOOR.getTexX(), TileType.GRASS_FLOOR.getTexY());
+						Artist.drawTexturedQuad(this.x + x*GameConstants.TILE_SIZE, this.y + y*GameConstants.TILE_SIZE,
+								GameConstants.TILE_SIZE, GameConstants.TILE_SIZE,
+								GameConstants.MAP_ATLAS.getTexture(), texCoords[0],
+								texCoords[1], texCoords[2], texCoords[3]);
+					}
+				}
+		} else {
+			for (int x = 0; x < rows; x++)
+				for (int y = 0; y < cols; y++) {
+					layer2[x][y].draw(this.x, this.y);
+				}
+		}
 	}
 
 	public Tile getTile(int layer, int tileX, int tileY) {
@@ -120,7 +137,7 @@ public class Map {
 					lines.add(line);
 				}
 				
-				for(int j = 0; j < columns; j++) {
+				for(int j = 0; j < lines.size(); j++) {
 					int[] row = new int[lines.get(j).split(",").length];
 					for (int k = 0; k < row.length; k++) {
 						String number = (lines.get(j).split(",")[k].trim());
