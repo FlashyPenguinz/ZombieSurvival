@@ -120,18 +120,6 @@ public class Client extends Thread {
 			}
 		} else if(type == PacketType.MAP_INFO) {
 			Packet06MapInfo packet = new Packet06MapInfo(data);
-			int[][][] map = packet.getMap();
-			String prod = "";
-			for (int i = 0; i < map.length; i++) {
-				for (int j = 0; j < map[i].length; j++) {
-					for (int k = 0; k < map[i][j].length; k++) {
-						prod+=map[i][j][k]+",";
-					}
-					prod = prod.substring(0, prod.length()-1) + "\n";
-				}
-				prod += "END\n";
-			}
-			System.out.println(prod);
 			gm.setMap(new Map(packet.getMap()));
 			gotMap = true;
 		}

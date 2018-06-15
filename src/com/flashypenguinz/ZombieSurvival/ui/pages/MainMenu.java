@@ -41,10 +41,10 @@ public class MainMenu extends Page {
 						String username = gm.user.getUsername();
 						Packet00Login loginPacket = new Packet00Login(username);
 						gm.getClient().sendData(loginPacket.getData());
-						while(true) {
-							System.out.print("");
-							if(gm.getClient().gotMap) 
-								break;
+						try {
+							Thread.sleep(2000);
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 						gm.getPlayer().setId(
 								gm.getEntityManager().getLatestEntityId()+1);
