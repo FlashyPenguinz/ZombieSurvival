@@ -13,8 +13,8 @@ public class AABB {
 	}
 
 	public void update(float x, float y) {
-		this.x = x;
-		this.y = y;
+		this.x = x-(width/2);
+		this.y = y-(height/2);
 	}
 	
 	public boolean isColliding(AABB box) {

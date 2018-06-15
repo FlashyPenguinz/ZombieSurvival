@@ -36,16 +36,15 @@ public class MainMenu extends Page {
 					} else if(gm.user.getUserLevel() == 0) {
 						//gm.setUIState(UIState.VERIFY);
 					//} else {
-						gm.setState(GameState.PLAYING);
 						GameManager.paused = false;
 						gm.getClient().start();
 						String username = gm.user.getUsername();
 						Packet00Login loginPacket = new Packet00Login(username);
 						gm.getClient().sendData(loginPacket.getData());
-						try {
-							Thread.sleep(5000);
-						} catch (Exception e) {
-							e.printStackTrace();
+						while(true) {
+							System.out.print("");
+							if(gm.getClient().gotMap) 
+								break;
 						}
 						gm.getPlayer().setId(
 								gm.getEntityManager().getLatestEntityId()+1);
@@ -66,6 +65,7 @@ public class MainMenu extends Page {
 										.getPlayer().getTextureCoords().x,
 										(int) gm.getPlayer().getTextureCoords().y));
 						gm.getClient().connected = true;
+						gm.setState(GameState.PLAYING);
 						Mouse.setGrabbed(true);
 					}
 				});

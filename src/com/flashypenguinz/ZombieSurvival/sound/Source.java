@@ -15,6 +15,10 @@ public class Source {
 		AudioMaster.sources.add(sourceId);
 	}
 	
+	public void setPosition(float x, float y) {
+		AL10.alSource3f(sourceId, AL10.AL_POSITION, x, y, 0);
+	}
+	
 	public void play(int buffer) {
 		AL10.alSourcei(sourceId, AL10.AL_BUFFER, buffer);
 		AL10.alSourcePlay(sourceId);

@@ -16,7 +16,6 @@ import com.flashypenguinz.ZombieSurvival.game.GameConstants;
 import com.flashypenguinz.ZombieSurvival.game.GameManager;
 import com.flashypenguinz.ZombieSurvival.helpers.Artist;
 import com.flashypenguinz.ZombieSurvival.helpers.Timer;
-import com.flashypenguinz.ZombieSurvival.map.Map;
 import com.flashypenguinz.ZombieSurvival.ui.components.Text;
 
 public class Player extends Entity {
@@ -24,7 +23,6 @@ public class Player extends Entity {
 	private Text username;
 
 	private GameManager gm;
-	private Map map;
 
 	private Gun gun;
 
@@ -41,7 +39,6 @@ public class Player extends Entity {
 				Font.BOLD, GameConstants.USERNAME_SIZE);
 		this.username.setColor(Color.white);
 		this.gm = gm;
-		this.map = gm.getMap();
 		this.gun = new Gun(this);
 		this.aabb = new AABB(0, 0, GameConstants.TILE_SIZE - 35,
 				GameConstants.TILE_SIZE - 35);
@@ -71,22 +68,18 @@ public class Player extends Entity {
 		this.username.draw();
 	}
 
-	public Map getMap() {
-		return map;
-	}
-
 	private void checkInputs() {
 		float xIncrease = 0;
 		float yIncrease = 0;
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			yIncrease = -SPEED;
+			yIncrease = -SPEED * Timer.delta;
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			yIncrease = SPEED;
+			yIncrease = SPEED * Timer.delta;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			xIncrease = -SPEED;
+			xIncrease = -SPEED * Timer.delta;
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			xIncrease = SPEED;
+			xIncrease = SPEED * Timer.delta;
 		}
 		updateAABB(getX() + xIncrease, getY());
 		if (checkCollisions())
@@ -95,71 +88,86 @@ public class Player extends Entity {
 		if (checkCollisions())
 			yIncrease = 0;
 		if (!(xIncrease == 0 && yIncrease == 0))
-			increasePosition(xIncrease * Timer.delta, yIncrease * Timer.delta);
+			increasePosition(xIncrease, yIncrease);
 	}
 
 	private boolean checkCollisions() {
+		System.out.println(aabb.getX()+", "+getX()+" ... "+aabb.getY()+", "+getY());
 		if (aabb.getX() < 0
-				|| aabb.getX() + aabb.getWidth() > (map.sizeX() * GameConstants.TILE_SIZE)
+				|| aabb.getX() + aabb.getWidth() > (gm.getMap().sizeX() * GameConstants.TILE_SIZE)
 				|| aabb.getY() < 0
-				|| aabb.getY() + aabb.getHeight() > (map.sizeY() * GameConstants.TILE_SIZE)) {
-			updateAABB(getX(), getY());
+				|| aabb.getY() + aabb.getHeight() > (gm.getMap().sizeY() * GameConstants.TILE_SIZE)) {
 			return true;
 		}
-		if (map.getTile(1,
-				(int) Math.floor(aabb.getX() / GameConstants.TILE_SIZE),
-				(int) Math.floor(aabb.getY() / GameConstants.TILE_SIZE))
-				.getType().isCollidable()
-				|| map.getTile(
-						2,
+		if (gm.getMap()
+				.getTile(
+						1,
 						(int) Math.floor(aabb.getX() / GameConstants.TILE_SIZE),
 						(int) Math.floor(aabb.getY() / GameConstants.TILE_SIZE))
-						.getType().isCollidable())
-			return true;
-		if (map.getTile(
-				1,
-				(int) Math.floor((aabb.getX() + aabb.getWidth())
-						/ GameConstants.TILE_SIZE),
-				(int) Math.floor(aabb.getY() / GameConstants.TILE_SIZE))
 				.getType().isCollidable()
-				|| map.getTile(
-						2,
+				|| gm.getMap()
+						.getTile(
+								2,
+								(int) Math.floor(aabb.getX()
+										/ GameConstants.TILE_SIZE),
+								(int) Math.floor(aabb.getY()
+										/ GameConstants.TILE_SIZE)).getType()
+						.isCollidable())
+			return true;
+		if (gm.getMap()
+				.getTile(
+						1,
 						(int) Math.floor((aabb.getX() + aabb.getWidth())
 								/ GameConstants.TILE_SIZE),
 						(int) Math.floor(aabb.getY() / GameConstants.TILE_SIZE))
-						.getType().isCollidable())
+				.getType().isCollidable()
+				|| gm.getMap()
+						.getTile(
+								2,
+								(int) Math.floor((aabb.getX() + aabb.getWidth())
+										/ GameConstants.TILE_SIZE),
+								(int) Math.floor(aabb.getY()
+										/ GameConstants.TILE_SIZE)).getType()
+						.isCollidable())
 			return true;
-		if (map.getTile(
-				1,
-				(int) Math.floor((aabb.getX() + aabb.getWidth())
-						/ GameConstants.TILE_SIZE),
-				(int) Math.floor((aabb.getY() + aabb.getHeight())
-						/ GameConstants.TILE_SIZE)).getType().isCollidable()
-				|| map.getTile(
-						2,
+		if (gm.getMap()
+				.getTile(
+						1,
 						(int) Math.floor((aabb.getX() + aabb.getWidth())
 								/ GameConstants.TILE_SIZE),
 						(int) Math.floor((aabb.getY() + aabb.getHeight())
 								/ GameConstants.TILE_SIZE)).getType()
-						.isCollidable())
+				.isCollidable()
+				|| gm.getMap()
+						.getTile(
+								2,
+								(int) Math.floor((aabb.getX() + aabb.getWidth())
+										/ GameConstants.TILE_SIZE),
+								(int) Math.floor((aabb.getY() + aabb
+										.getHeight()) / GameConstants.TILE_SIZE))
+						.getType().isCollidable())
 			return true;
-		if (map.getTile(
-				1,
-				(int) Math.floor(aabb.getX() / GameConstants.TILE_SIZE),
-				(int) Math.floor((aabb.getY() + aabb.getHeight())
-						/ GameConstants.TILE_SIZE)).getType().isCollidable()
-				|| map.getTile(
-						2,
+		if (gm.getMap()
+				.getTile(
+						1,
 						(int) Math.floor(aabb.getX() / GameConstants.TILE_SIZE),
 						(int) Math.floor((aabb.getY() + aabb.getHeight())
 								/ GameConstants.TILE_SIZE)).getType()
-						.isCollidable())
+				.isCollidable()
+				|| gm.getMap()
+						.getTile(
+								2,
+								(int) Math.floor(aabb.getX()
+										/ GameConstants.TILE_SIZE),
+								(int) Math.floor((aabb.getY() + aabb
+										.getHeight()) / GameConstants.TILE_SIZE))
+						.getType().isCollidable())
 			return true;
 		return false;
 	}
 
 	private void updateAABB(float x, float y) {
-		aabb.update(x - 15, y - 15);
+		aabb.update(x, y);
 	}
 
 	private void calculateRotation() {

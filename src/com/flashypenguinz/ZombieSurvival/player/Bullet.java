@@ -6,9 +6,9 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import com.flashypenguinz.ZombieSurvival.game.GameConstants;
+import com.flashypenguinz.ZombieSurvival.game.GameManager;
 import com.flashypenguinz.ZombieSurvival.helpers.Artist;
 import com.flashypenguinz.ZombieSurvival.helpers.Timer;
-import com.flashypenguinz.ZombieSurvival.map.Map;
 import com.flashypenguinz.ZombieSurvival.net.entities.NetBullet;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet04BulletChange;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet05BulletMove;
@@ -19,7 +19,7 @@ public class Bullet {
 	private final float WIDTH = 10, HEIGHT = 20;
 
 	private Player player;
-	private Map map;
+	private GameManager gm;
 
 	private int id;
 	
@@ -32,7 +32,7 @@ public class Bullet {
 	public Bullet(int id, Player player, float x, float y, float rot, List<Bullet> toRemoveBullets) {
 		this.id = id;
 		this.player = player;
-		this.map = player.getMap();
+		this.gm = player.getGameManager();
 		this.x = x;
 		this.y = y;
 		this.rotation = rot;
@@ -73,14 +73,14 @@ public class Bullet {
 	}
 	
 	private boolean checkCollisions() {
-		if (x < 0 || x + WIDTH > (map.sizeX() * GameConstants.TILE_SIZE)
-				|| y < 0 || y + HEIGHT > (map.sizeY() * GameConstants.TILE_SIZE)) {
+		if (x < 0 || x + WIDTH > (gm.getMap().sizeX() * GameConstants.TILE_SIZE)
+				|| y < 0 || y + HEIGHT > (gm.getMap().sizeY() * GameConstants.TILE_SIZE)) {
 			return true;
 		}
-		if (map.getTile(1,
+		if (gm.getMap().getTile(1,
 				(int) Math.floor((x+(WIDTH/2)) / GameConstants.TILE_SIZE),
 				(int) Math.floor((y+(HEIGHT/2)) / GameConstants.TILE_SIZE))
-				.getType().isCollidable() || map.getTile(2,
+				.getType().isCollidable() || gm.getMap().getTile(2,
 						(int) Math.floor((x+(WIDTH/2)) / GameConstants.TILE_SIZE),
 						(int) Math.floor((y+(HEIGHT/2)) / GameConstants.TILE_SIZE))
 						.getType().isCollidable())

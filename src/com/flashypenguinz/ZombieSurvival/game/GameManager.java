@@ -48,7 +48,7 @@ public class GameManager {
 
 	public GameManager() {
 		this.pauseMenu = new PauseMenu();
-		this.player = new Player("", this, 50, 50, new TextureAtlas("player"));
+		this.player = new Player("", this, (float) 15*GameConstants.TILE_SIZE, (float) 15*GameConstants.TILE_SIZE, new TextureAtlas("player"));
 		this.cursor = new Cursor("cursor");
 		this.dm = new DatabaseManager();
 		this.em = new EntityManager(this);
@@ -118,7 +118,7 @@ public class GameManager {
 		dm.closeConnection();
 		if(client.connected)
 			client.sendData(new Packet01Disconnect().getData());
-		//saveToCache();
+		saveToCache();
 	}
 	
 	private void checkForCache() {
