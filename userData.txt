@@ -1,5 +1,0 @@
-id:2
-username:Penguinz22
-email:nate19522@gmail.com
-password:mudkip12epic
-level:0
