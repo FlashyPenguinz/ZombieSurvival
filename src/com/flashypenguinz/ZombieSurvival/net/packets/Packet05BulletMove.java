@@ -8,9 +8,9 @@ public class Packet05BulletMove extends Packet {
 	public Packet05BulletMove(byte[] data) {
 		super(05);
 		String[] array = readData(data).split(",");
-		this.id = Integer.valueOf(array[1]);
-		this.x = Float.valueOf(array[3]);
-		this.y = Float.valueOf(array[4]);
+		this.id = Integer.valueOf(array[0]);
+		this.x = Float.valueOf(array[1]);
+		this.y = Float.valueOf(array[2]);
 	}
 
 	
