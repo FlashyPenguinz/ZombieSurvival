@@ -12,14 +12,20 @@ public class EntityManager {
 	//private GameManager gm;
 	
 	private List<NetEntity> entities;
+	private List<NetEntity> toRemoveEntities;
 	
 	public EntityManager(GameManager gm) {
 		//this.gm = gm;
 		this.entities = new ArrayList<NetEntity>();
+		this.toRemoveEntities = new ArrayList<NetEntity>();
 	}
 	
 	public void addEntity(NetEntity entity) {
 		entities.add(entity);
+	}
+	
+	public void removeEntity(NetEntity entity) {
+		toRemoveEntities.add(entity);
 	}
 	
 	public NetEntity getEntityById(int id) {
@@ -39,7 +45,7 @@ public class EntityManager {
 				break;
 			}
 		if(toBeRemoved != null)
-			entities.remove(toBeRemoved);
+			toRemoveEntities.add(toBeRemoved);
 	}
 	
 	public NetPlayer getPlayerById(int id) {
@@ -74,6 +80,15 @@ public class EntityManager {
 			if(entity instanceof NetPlayer)
 				players.add((NetPlayer) entity);
 		return players;
+	}
+	
+	public void updateEntityLists() {
+		for(NetEntity e: toRemoveEntities) {
+			if(entities.contains(e)) {
+				entities.remove(e);
+			}
+		}
+		toRemoveEntities.clear();
 	}
 	
 }

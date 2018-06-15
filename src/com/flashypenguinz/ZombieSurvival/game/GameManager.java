@@ -60,6 +60,7 @@ public class GameManager {
 	public void update() {
 		GL11.glClearColor(0, 1, 1, 1);
 		if (state == GameState.PLAYING) {
+			em.updateEntityLists();
 			if (!paused) {
 				if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 					paused = true;
@@ -119,7 +120,7 @@ public class GameManager {
 		dm.closeConnection();
 		if(client.connected)
 			client.sendData(new Packet01Disconnect().getData());
-		saveToCache();
+		//saveToCache();
 	}
 	
 	private void checkForCache() {
