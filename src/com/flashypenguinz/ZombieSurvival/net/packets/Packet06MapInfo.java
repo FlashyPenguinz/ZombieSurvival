@@ -21,14 +21,7 @@ public class Packet06MapInfo extends Packet {
 			}
 		}
 		
-		int[][][] tempMap = new int[2][cols][rows];
-		
-		for(int i = 0; i < 2; i++)
-			for (int j = 0; j < rows; j++) 
-				for (int k = 0; k < cols; k++)
-					tempMap[i][k][j] = map[i][j][k];
-		
-		this.map = tempMap;
+		this.map = map;
 	}
 
 	public Packet06MapInfo(int[][][] map) {

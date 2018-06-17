@@ -9,11 +9,14 @@ import java.net.UnknownHostException;
 
 import org.lwjgl.opengl.Display;
 
+import com.flashypenguinz.ZombieSurvival.game.GameConstants;
 import com.flashypenguinz.ZombieSurvival.game.GameManager;
 import com.flashypenguinz.ZombieSurvival.map.Map;
+import com.flashypenguinz.ZombieSurvival.map.Tile;
 import com.flashypenguinz.ZombieSurvival.net.entities.NetBullet;
 import com.flashypenguinz.ZombieSurvival.net.entities.NetEntity;
 import com.flashypenguinz.ZombieSurvival.net.entities.NetPlayer;
+import com.flashypenguinz.ZombieSurvival.net.entities.NetZombie;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet00Login;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet02PlayerChange;
@@ -21,7 +24,10 @@ import com.flashypenguinz.ZombieSurvival.net.packets.Packet03EntityMove;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet04BulletChange;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet05BulletMove;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet06MapInfo;
+import com.flashypenguinz.ZombieSurvival.net.packets.Packet07ZombieChange;
+import com.flashypenguinz.ZombieSurvival.net.packets.Packet10MapEdit;
 import com.flashypenguinz.ZombieSurvival.net.packets.PacketType;
+import com.flashypenguinz.ZombieSurvival.player.Player;
 import com.flashypenguinz.ZombieSurvival.sound.AudioMaster;
 import com.flashypenguinz.ZombieSurvival.sound.Source;
 
@@ -31,7 +37,7 @@ public class Client extends Thread {
 
 	public boolean connected = false;
 	public boolean gotMap = false;
-	
+
 	private GameManager gm;
 
 	private DatagramSocket socket;
@@ -92,8 +98,14 @@ public class Client extends Thread {
 			NetEntity entity = gm.getEntityManager().getEntityById(
 					packet.getId());
 			if (entity != null) {
-				entity.setPosition(packet.getX(), packet.getY());
-				entity.setRotation(packet.getRotation());
+				if(entity.getId() == gm.getPlayer().getId()) {
+					Player player = gm.getPlayer();
+					player.setPosition(packet.getX(), packet.getY());
+					player.setRotation(packet.getRotation());
+				} else {
+					entity.setPosition(packet.getX(), packet.getY());
+					entity.setRotation(packet.getRotation());
+				}
 			}
 		} else if (type == PacketType.BULLET_CHANGE) {
 			Packet04BulletChange packet = new Packet04BulletChange(data);
@@ -104,9 +116,11 @@ public class Client extends Thread {
 										.getRotation()));
 				Source player = new Source();
 				player.setGain(0.25f);
-				player.setPosition((-(gm.getPlayer().getX() - packet.getX()))
-										+ (Display.getWidth() / 2), (-(gm.getPlayer().getY() - packet.getY()))
-										+ (Display.getHeight() / 2));
+				player.setPosition(
+						(-(gm.getPlayer().getX() - packet.getX()))
+								+ (Display.getWidth() / 2),
+						(-(gm.getPlayer().getY() - packet.getY()))
+								+ (Display.getHeight() / 2));
 				player.play(AudioMaster.loadSound("gunshot"));
 			} else {
 				gm.getEntityManager().removeEntityById(packet.getId());
@@ -118,10 +132,22 @@ public class Client extends Thread {
 			if (entity != null) {
 				entity.setPosition(packet.getX(), packet.getY());
 			}
-		} else if(type == PacketType.MAP_INFO) {
+		} else if (type == PacketType.MAP_INFO) {
 			Packet06MapInfo packet = new Packet06MapInfo(data);
 			gm.setMap(new Map(packet.getMap()));
 			gotMap = true;
+		} else if (type == PacketType.ZOMBIE_CHANGE) {
+			Packet07ZombieChange packet = new Packet07ZombieChange(data);
+			if (packet.getType() == 0) {
+				gm.getEntityManager().addEntity(
+						new NetZombie(packet.getId(), packet.getX(), packet
+								.getY(), packet.getZombieType()));
+			} else {
+				gm.getEntityManager().removeEntityById(packet.getId());
+			}
+		} else if(type == PacketType.MAP_EDIT) {
+			Packet10MapEdit packet = new Packet10MapEdit(data);
+			gm.getMap().setTile(packet.getLayer(), packet.getTileX(), packet.getTileY(), new Tile(packet.getTileX()*GameConstants.TILE_SIZE, packet.getTileY()*GameConstants.TILE_SIZE, packet.getTileType()));
 		}
 	}
 

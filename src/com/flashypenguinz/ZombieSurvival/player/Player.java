@@ -31,7 +31,8 @@ public class Player extends Entity {
 	private float lastAngle = 0;
 
 	private final float SPEED = 200;
-
+	private int health;
+	
 	public Player(String username, GameManager gm, float x, float y,
 			TextureAtlas texture) {
 		super(0, x, y, texture, 0, 0, 0);
@@ -42,6 +43,7 @@ public class Player extends Entity {
 		this.gun = new Gun(this);
 		this.aabb = new AABB(0, 0, GameConstants.TILE_SIZE - 35,
 				GameConstants.TILE_SIZE - 35);
+		this.health = 100;
 	}
 
 	public void updateBullets() {
@@ -62,12 +64,25 @@ public class Player extends Entity {
 				GameConstants.DISPLAY_HEIGHT / 2, getWidth(), getHeight(),
 				getRotation(), getTextureAtlas().getTexture(), 0, 0, 1, 1);
 		GL11.glPopMatrix();
+		drawHealthBar();
 		this.username.setX(GameConstants.DISPLAY_WIDTH / 2);
 		this.username.setY((GameConstants.DISPLAY_HEIGHT / 2)
 				- GameConstants.USERNAME_Y);
 		this.username.draw();
 	}
 
+	private void drawHealthBar() {
+		GL11.glPushMatrix();
+		Artist.drawColoredQuad((GameConstants.DISPLAY_WIDTH/2)-(aabb.getWidth()), (GameConstants.DISPLAY_HEIGHT/2)-GameConstants.HEALTH_BAR_Y, aabb.getWidth()*2, GameConstants.HEALTH_BAR_HEIGHT, 0, 0.41f, 0.41f, 0.41f);
+		GL11.glPopMatrix();
+		GL11.glPushMatrix();
+		Artist.drawColoredQuad((GameConstants.DISPLAY_WIDTH/2)-(aabb.getWidth())+2, (GameConstants.DISPLAY_HEIGHT/2)-GameConstants.HEALTH_BAR_Y+2, aabb.getWidth()*2-4, GameConstants.HEALTH_BAR_HEIGHT-4, 0, 0.92f, 0.12f, 0.12f);
+		GL11.glPopMatrix();
+		GL11.glPushMatrix();
+		Artist.drawColoredQuad((GameConstants.DISPLAY_WIDTH/2)-(aabb.getWidth())+2, (GameConstants.DISPLAY_HEIGHT/2)-GameConstants.HEALTH_BAR_Y+2, (int) ((aabb.getWidth()*2-4)*(health/GameConstants.MAX_HEALTH)), GameConstants.HEALTH_BAR_HEIGHT-4, 0, 0.12f, 0.92f, 0.2f);
+		GL11.glPopMatrix();
+	}
+	
 	private void checkInputs() {
 		float xIncrease = 0;
 		float yIncrease = 0;
@@ -92,7 +107,6 @@ public class Player extends Entity {
 	}
 
 	private boolean checkCollisions() {
-		System.out.println(aabb.getX()+", "+getX()+" ... "+aabb.getY()+", "+getY());
 		if (aabb.getX() < 0
 				|| aabb.getX() + aabb.getWidth() > (gm.getMap().sizeX() * GameConstants.TILE_SIZE)
 				|| aabb.getY() < 0

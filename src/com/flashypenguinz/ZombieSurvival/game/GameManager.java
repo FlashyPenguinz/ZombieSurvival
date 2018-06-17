@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL11;
 import com.flashypenguinz.ZombieSurvival.data.TextureAtlas;
 import com.flashypenguinz.ZombieSurvival.entities.EntityManager;
 import com.flashypenguinz.ZombieSurvival.map.Map;
+import com.flashypenguinz.ZombieSurvival.map.Tile;
 import com.flashypenguinz.ZombieSurvival.net.Client;
 import com.flashypenguinz.ZombieSurvival.net.entities.NetEntity;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet01Disconnect;
@@ -45,7 +46,7 @@ public class GameManager {
 	private Map map;
 	private Player player;
 	private Cursor cursor;
-
+	
 	public GameManager() {
 		this.pauseMenu = new PauseMenu();
 		this.player = new Player("", this, (float) 15*GameConstants.TILE_SIZE, (float) 15*GameConstants.TILE_SIZE, new TextureAtlas("player"));
@@ -55,6 +56,17 @@ public class GameManager {
 		checkForCache();
 		this.um = new UIManager(this);
 		this.client = new Client(this, "25.13.40.96", 8192);
+		
+		/*this.map = new Map(Map.loadMapFile("res/data/pathfind.txt"));
+		startPos = map.getTile(1, 0, 0);
+		startPos.setType(TileType.BARRICADE);
+		endPos = map.getTile(1, 6, 0);
+		endPos.setType(TileType.BARRICADE);
+		
+		List<Node> nodes = PathFinder.pathFind(map, startPos.getX(), startPos.getY(), endPos.getX(), endPos.getY());
+		for (int i = 0; i < nodes.size()-1; i++) {
+			map.getTile(1, nodes.get(i).getX(), nodes.get(i).getY()).setType(TileType.WOODEN_FLOOR);
+		}*/
 	}
 
 	public void update() {
@@ -81,7 +93,7 @@ public class GameManager {
 			um.update();
 		}
 	}
-
+	
 	public void draw() {
 		if (state == GameState.PLAYING) {
 			if (player != null) {
@@ -104,7 +116,6 @@ public class GameManager {
 		} else {
 			um.draw();
 		}
-
 	}
 
 	private boolean isIdLocal(int id) {
@@ -120,7 +131,7 @@ public class GameManager {
 		dm.closeConnection();
 		if(client.connected)
 			client.sendData(new Packet01Disconnect().getData());
-		//saveToCache();
+		saveToCache();
 	}
 	
 	private void checkForCache() {

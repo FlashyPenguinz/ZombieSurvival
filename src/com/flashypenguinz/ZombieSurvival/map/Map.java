@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.flashypenguinz.ZombieSurvival.game.GameConstants;
 import com.flashypenguinz.ZombieSurvival.helpers.Artist;
+import com.flashypenguinz.ZombieSurvival.pathfinding.Node;
 
 public class Map {
 
@@ -19,6 +20,7 @@ public class Map {
 	
 	private Tile[][] layer1;
 	private Tile[][] layer2;
+	private Node[][] nodes;
 	
 	private int[][][] rawMap;
 	
@@ -33,12 +35,14 @@ public class Map {
 
 		this.layer1 = new Tile[rows][cols];
 		this.layer2 = new Tile[rows][cols];
+		this.nodes = new Node[rows][rows];
 		for (int x = 0; x < rows; x++)
 			for (int y = 0; y < cols; y++) {
 				for (TileType type : TileType.values()) {
 					if (type.getId() == layers[0][x][y]) {
 						this.layer1[x][y] = new Tile(x * GameConstants.TILE_SIZE, y
 								* GameConstants.TILE_SIZE, type);
+
 					}
 					if (type.getId() == layers[1][x][y]) {
 						this.layer2[x][y] = new Tile(x * GameConstants.TILE_SIZE, y
@@ -46,10 +50,18 @@ public class Map {
 					}
 				}
 			}
+		for (int x = 0; x < rows; x++) {
+			for (int y = 0; y < cols; y++) {
+				boolean passable = true;
+				if(this.layer1[x][y].getType().isCollidable()||this.layer2[x][y].getType().isCollidable())
+					passable = false;
+				nodes[x][y] = new Node(x, y, passable);
+			}
+		}
 	}
 
 	public void draw(int layer) {
-		int exp = 8;
+		int exp = 0;
 		if(layer == 1) {
 			for (int x = -exp; x < rows+exp; x++)
 				for (int y = -exp; y < cols+exp; y++) {
@@ -77,6 +89,17 @@ public class Map {
 			return layer1[tileX][tileY];
 		else
 			return layer2[tileX][tileY];
+	}
+	
+	public void setTile(int layer, int tileX, int tileY, Tile tile) {
+		if(layer == 1)
+			layer1[tileX][tileY] = tile;
+		else
+			layer2[tileX][tileY] = tile;
+	}
+	
+	public Node[][] getNodes() {
+		return nodes;
 	}
 
 	public int sizeX() {
@@ -154,7 +177,7 @@ public class Map {
 					}
 				
 				lines.clear();
-				finalMap[i] = map;
+				finalMap[i] = tempMap;
 				
 			}
 			reader.close();

@@ -11,6 +11,7 @@ public class NetPlayer extends NetEntity {
 
 	private Text username;
 	private String usernameText;
+	private int health;
 	
 	public NetPlayer(int id, String username, float x, float y, String textureName, int texX, int texY) {
 		super(id, x, y, textureName, texX, texY, 0);
