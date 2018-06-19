@@ -13,8 +13,16 @@ public class Packet11Sync extends Packet {
 		super(11);
 		List<SyncEntity> entities = new ArrayList<SyncEntity>();
 		String[] array = readData(data).split("|");
+		if(array.length == 0) {
+			entities = null;
+			return;
+		}
 		for(String entity: array) {
 			String[] info = entity.split(",");
+			if(info.length != 4) {
+				entities = null;
+				return;
+			}
 			entities.add(new SyncEntity(Integer.valueOf(info[0]), Float.valueOf(info[1]), Float.valueOf(info[2]), Float.valueOf(info[3])));
 		}
 		this.entities = entities;

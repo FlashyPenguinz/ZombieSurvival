@@ -152,7 +152,11 @@ public class Client extends Thread {
 			Packet10MapEdit packet = new Packet10MapEdit(data);
 			gm.getMap().setTile(packet.getLayer(), packet.getTileX(), packet.getTileY(), new Tile(packet.getTileX()*GameConstants.TILE_SIZE, packet.getTileY()*GameConstants.TILE_SIZE, packet.getTileType()));
 		} else if(type == PacketType.SYNC) {
+			if(!connected)
+				return;
 			Packet11Sync packet = new Packet11Sync(data);
+			if(packet.getEntities() == null)
+				return;
 			if(gm.getEntityManager().getEntities().size() == packet.getEntities().size())
 				return;
 			List<Integer> ids = new ArrayList<Integer>();
