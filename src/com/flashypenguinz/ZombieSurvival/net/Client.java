@@ -6,6 +6,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.opengl.Display;
 
@@ -26,6 +28,7 @@ import com.flashypenguinz.ZombieSurvival.net.packets.Packet05BulletMove;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet06MapInfo;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet07ZombieChange;
 import com.flashypenguinz.ZombieSurvival.net.packets.Packet10MapEdit;
+import com.flashypenguinz.ZombieSurvival.net.packets.Packet11Sync;
 import com.flashypenguinz.ZombieSurvival.net.packets.PacketType;
 import com.flashypenguinz.ZombieSurvival.player.Player;
 import com.flashypenguinz.ZombieSurvival.sound.AudioMaster;
@@ -148,6 +151,23 @@ public class Client extends Thread {
 		} else if(type == PacketType.MAP_EDIT) {
 			Packet10MapEdit packet = new Packet10MapEdit(data);
 			gm.getMap().setTile(packet.getLayer(), packet.getTileX(), packet.getTileY(), new Tile(packet.getTileX()*GameConstants.TILE_SIZE, packet.getTileY()*GameConstants.TILE_SIZE, packet.getTileType()));
+		} else if(type == PacketType.SYNC) {
+			Packet11Sync packet = new Packet11Sync(data);
+			if(gm.getEntityManager().getEntities().size() == packet.getEntities().size())
+				return;
+			List<Integer> ids = new ArrayList<Integer>();
+			for (int i = 0; i < packet.getEntities().size(); i++) {
+				ids.add(packet.getEntities().get(i).getId());
+			}
+			List<Integer> toRemove = new ArrayList<Integer>();
+			for (NetEntity entity: gm.getEntityManager().getEntities()) {
+				if(!ids.contains(entity.getId())) {
+					toRemove.add(entity.getId());
+				}
+			}
+			for(int entity: toRemove) {
+				gm.getEntityManager().removeEntityById(entity);
+			}
 		}
 	}
 

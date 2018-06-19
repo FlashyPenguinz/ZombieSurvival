@@ -30,6 +30,18 @@ public class NetPlayer extends NetEntity {
 		this.username.draw();
 	}
 	
+	public void setHealth(int health) {
+		this.health = health;
+	}
+	
+	public void changeHealth(int change) {
+		this.health+=change;
+	}
+	
+	public int getHealth() {
+		return health;
+	}
+	
 	public String getUsername() {
 		return usernameText;
 	}
